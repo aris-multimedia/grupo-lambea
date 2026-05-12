@@ -682,12 +682,12 @@
   .promo-banner-body small { display: block; font-size: 12px; color: var(--ink-500); margin-top: 3px; }
 
   .promo-calc {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
     padding: 14px 18px; border-radius: var(--r-md);
     font-size: 13px; margin-top: 14px;
     border: 1.5px solid var(--line);
     background: var(--bg-soft);
-    transition: background 0.5s, border-color 0.4s;
+    transition: background 0.4s, border-color 0.3s;
     line-height: 1.5;
   }
   .promo-calc.active {
@@ -695,66 +695,7 @@
     border-color: rgba(74, 124, 89, 0.28);
     color: #2a6338;
   }
-
-  /* Step dots */
-  .promo-steps { display: flex; align-items: center; gap: 0; }
-  .ps-wrap { display: flex; align-items: center; gap: 0; }
-  .ps-dot {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 2px solid rgba(26,31,42,0.14);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700; color: var(--ink-500);
-    background: #fff; flex-shrink: 0;
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative; user-select: none;
-  }
-  .ps-dot.paid { background: var(--warning); border-color: var(--warning); color: var(--ink); }
-  .ps-dot.free-pending { border-style: dashed; border-color: rgba(232,169,60,0.4); color: rgba(26,31,42,0.25); font-size: 15px; }
-  .ps-dot.free-active { background: var(--success); border-color: var(--success); color: #fff; font-size: 15px; }
-  .ps-line {
-    height: 3px; width: 28px; flex-shrink: 0;
-    background: rgba(26,31,42,0.1);
-    transition: background 0.4s;
-  }
-  .ps-line.filled { background: var(--warning); }
-  .ps-extra {
-    margin-left: 12px; background: rgba(74,124,89,0.12); color: #2a6338;
-    border-radius: 100px; padding: 3px 10px; font-size: 11px; font-weight: 700;
-    white-space: nowrap;
-  }
-
-  @keyframes dotPop {
-    0% { transform: scale(1); }
-    35% { transform: scale(1.55); }
-    65% { transform: scale(0.88); }
-    85% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-  }
-  .ps-dot.popping { animation: dotPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-
-  @keyframes promoActivate {
-    0% { box-shadow: none; }
-    20% { box-shadow: 0 0 0 4px rgba(74,124,89,0.2); }
-    100% { box-shadow: none; }
-  }
-  .promo-calc.flash { animation: promoActivate 0.7s ease forwards; }
-
-  @keyframes badgePop {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.5); background: var(--warning); color: var(--ink); }
-    100% { transform: scale(1); }
-  }
-  .cart-count.pop { animation: badgePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-  @keyframes btnShimmer {
-    0% { background-position: 200% center; }
-    100% { background-position: -200% center; }
-  }
-  .add-cart-btn.shimmer {
-    background-image: linear-gradient(90deg, var(--blue-dark) 0%, #4FB5E8 50%, var(--blue-dark) 100%);
-    background-size: 300% auto;
-    animation: btnShimmer 0.7s ease-out forwards;
-  }
+  .promo-calc-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; line-height: 1; }
 
   .cart-toast {
     position: fixed; bottom: 28px; right: 28px; z-index: 9999;
@@ -1046,7 +987,7 @@
           <div class="megamenu-inner">
             <a href="producto.html" class="mm-card">
               <div class="mm-card-img">
-                <img src="https://images.unsplash.com/photo-1605281317010-fe5ffe798166?auto=format&fit=crop&w=900&q=80" alt="Productos náuticos Grupo Lambea">
+                <img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" alt="Productos náuticos Grupo Lambea">
                 <div class="mm-card-img-overlay">
                   <div class="mm-card-eyebrow">Náutica</div>
                   <div class="mm-card-title">Productos para barcos</div>
@@ -1057,7 +998,7 @@
             </a>
             <a href="#" class="mm-card">
               <div class="mm-card-img">
-                <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=900&q=80" alt="Productos caravaning Grupo Lambea">
+                <img src="https://grupolambea.com/wp-content/uploads/2021/09/MOTORLAN-N-1024x1024.jpg" alt="Productos caravaning Grupo Lambea">
                 <div class="mm-card-img-overlay">
                   <div class="mm-card-eyebrow">Caravaning</div>
                   <div class="mm-card-title">Productos para caravanas</div>
@@ -1068,7 +1009,7 @@
             </a>
             <a href="#" class="mm-card">
               <div class="mm-card-img">
-                <img src="https://images.unsplash.com/photo-1486754735734-325b5831c3ad?auto=format&fit=crop&w=900&q=80" alt="Productos industriales Grupo Lambea">
+                <img src="https://grupolambea.com/wp-content/uploads/2021/09/71X25RzfZuL._AC_SL1500_-e1689784561850-1024x1021.jpg" alt="Productos industriales Grupo Lambea">
                 <div class="mm-card-img-overlay">
                   <div class="mm-card-eyebrow">Industrial · Vehículos</div>
                   <div class="mm-card-title">Coches, camiones y talleres</div>
@@ -1123,16 +1064,15 @@
 <div class="product-page">
   <div class="gallery">
     <div class="gallery-thumbs">
-      <div class="thumb active"><img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" data-fallback="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=800&q=80" alt="Desoxilam Náutico 1L" onerror="this.onerror=null;this.src=this.dataset.fallback;"></div>
-      <div class="thumb "><img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" data-fallback="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=800&q=80" alt="Desoxilam Náutico 500ml" onerror="this.onerror=null;this.src=this.dataset.fallback;"></div>
-      <div class="thumb "><img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" data-fallback="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=800&q=80" alt="Desoxilam Náutico 250ml" onerror="this.onerror=null;this.src=this.dataset.fallback;"></div>
-      <div class="thumb "><img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" data-fallback="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=800&q=80" alt="Desoxilam Náutico 5L" onerror="this.onerror=null;this.src=this.dataset.fallback;"></div>
-      
+      <div class="thumb active"><img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-600x600.webp" alt="Desoxilam Náutico 1L"></div>
+      <div class="thumb"><img src="https://grupolambea.com/wp-content/uploads/2021/09/desoxilam-nautico-500.jpg" alt="Desoxilam Náutico 500ml"></div>
+      <div class="thumb"><img src="https://grupolambea.com/wp-content/uploads/2021/09/desoxilam-nautico-250.jpg" alt="Desoxilam Náutico 250ml"></div>
+      <div class="thumb"><img src="https://grupolambea.com/wp-content/uploads/2021/09/desoxilam-nautico-125.jpg" alt="Desoxilam Náutico 125ml"></div>
     </div>
     <div class="gallery-main">
       <span class="gallery-tag"><i data-lucide="award"></i> Más vendido</span>
       <button class="zoom-btn"><i data-lucide="zoom-in"></i></button>
-      <img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-1024x1024.webp" data-fallback="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=800&q=80" alt="Desoxilam Náutico" id="main-img" onerror="this.onerror=null;this.src=this.dataset.fallback;">
+      <img src="https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016-600x600.webp" alt="Desoxilam Náutico" id="main-img">
     </div>
   </div>
 
@@ -1190,7 +1130,7 @@
     </div>
 
     <div class="promo-calc" id="promo-calc">
-      <div class="promo-steps" id="promo-steps"></div>
+      <span class="promo-calc-icon" id="promo-calc-icon">🎁</span>
       <span id="promo-calc-text"></span>
     </div>
 
@@ -1467,75 +1407,27 @@
   function parsePrice(str) { return parseFloat(str.replace(/[€\s]/g, '').replace(',', '.')); }
   function formatPrice(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 
-  // --- STEP DOTS ---
-  let _prevFreeItems = 0;
-
-  function buildSteps(qty) {
-    const mod = qty % 3;
-    const completedGroups = Math.floor(qty / 3);
-    const currentInGroup = (mod === 0 && qty > 0) ? 3 : mod;
-
-    const d = (n) => {
-      // n=1,2 → paid slots; n=3 → free slot
-      let cls = 'ps-dot';
-      let content = n < 3 ? String(n) : '🎁';
-      if (n < 3 && n <= Math.min(currentInGroup, 2)) {
-        cls += ' paid';
-        content = '✓';
-      } else if (n === 3) {
-        cls += currentInGroup === 3 ? ' free-active' : ' free-pending';
-      }
-      return `<div class="${cls}">${content}</div>`;
-    };
-    const l = (n) => {
-      const filled = n < 3 && n < currentInGroup;
-      return `<div class="ps-line${filled ? ' filled' : ''}"></div>`;
-    };
-
-    let html = `<div class="ps-wrap">${d(1)}${l(1)}${d(2)}${l(2)}${d(3)}</div>`;
-    if (completedGroups > 0 && mod > 0) {
-      html += `<div class="ps-extra">+${completedGroups} gratis ya</div>`;
-    }
-    return html;
-  }
-
   // --- PROMO CALC ---
-  function updatePromoCalc(animate = false) {
+  function updatePromoCalc() {
     const qty = parseInt(document.getElementById('qty-input').value) || 1;
     const price = parsePrice(document.querySelector('.price-current').textContent);
     const freeItems = Math.floor(qty / 3);
     const savings = freeItems * price;
     const calcEl = document.getElementById('promo-calc');
     const textEl = document.getElementById('promo-calc-text');
-    const stepsEl = document.getElementById('promo-steps');
+    const iconEl = document.getElementById('promo-calc-icon');
     const needed = qty % 3 === 0 ? 0 : 3 - (qty % 3);
-
-    // Animate 3×2 activation
-    if (animate && freeItems > _prevFreeItems) {
-      calcEl.classList.remove('flash');
-      void calcEl.offsetWidth;
-      calcEl.classList.add('flash');
-      setTimeout(() => calcEl.classList.remove('flash'), 800);
-      setTimeout(() => {
-        const freeDot = stepsEl.querySelector('.ps-dot.free-active');
-        if (freeDot) {
-          freeDot.classList.add('popping');
-          setTimeout(() => freeDot.classList.remove('popping'), 600);
-        }
-      }, 80);
-    }
-    _prevFreeItems = freeItems;
-
-    stepsEl.innerHTML = buildSteps(qty);
 
     if (freeItems > 0) {
       calcEl.classList.add('active');
+      iconEl.textContent = '✓';
       const freeLabel = freeItems === 1 ? '1 unidad gratis' : `${freeItems} unidades gratis`;
       textEl.innerHTML = needed === 0
         ? `<strong>¡3×2 activado!</strong> ${freeLabel} — ahorras <strong>${formatPrice(savings)}</strong>`
         : `<strong>3×2 activo</strong> — ${freeLabel}, ahorras ${formatPrice(savings)}. Añade <strong>${needed} más</strong> para otro gratis.`;
     } else {
       calcEl.classList.remove('active');
+      iconEl.textContent = '🎁';
       textEl.innerHTML = qty === 1
         ? `Añade <strong>2 unidades más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`
         : `Añade <strong>1 unidad más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`;
@@ -1549,7 +1441,7 @@
       let val = parseInt(input.value) || 1;
       if (btn.querySelector('[data-lucide="plus"]')) val++; else val = Math.max(1, val - 1);
       input.value = val;
-      updatePromoCalc(true);
+      updatePromoCalc();
     });
   });
 
@@ -1560,7 +1452,7 @@
       v.classList.add('active');
       document.querySelector('.option-label .selected strong').textContent = v.firstChild.textContent.trim();
       document.querySelector('.price-current').textContent = v.querySelector('.variant-price').textContent;
-      updatePromoCalc(false);
+      updatePromoCalc();
     });
   });
 
@@ -1571,33 +1463,14 @@
     const variant = document.querySelector('.option-label .selected strong').textContent;
     const id = 'desoxilam-nautico-' + variant.toLowerCase().replace(/[\s\/]/g, '-');
     const cart = getCart();
-    const prevFree = cart.find(i => i.id === id) ? Math.floor(cart.find(i=>i.id===id).qty / 3) : 0;
     const existing = cart.find(i => i.id === id);
     if (existing) { existing.qty += qty; } else {
       cart.push({ id, qty, price, name: 'Desoxilam Náutico', variant,
-        img: 'https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=400&q=80' });
+        img: 'https://grupolambea.com/wp-content/uploads/2021/09/desoxilam-nautico-500.jpg' });
     }
     saveCart(cart);
 
     const newFree = Math.floor(cart.find(i => i.id === id).qty / 3);
-    const btn = document.getElementById('add-cart-btn');
-
-    // Shimmer if 3×2 just unlocked
-    if (newFree > prevFree) {
-      btn.classList.remove('shimmer');
-      void btn.offsetWidth;
-      btn.classList.add('shimmer');
-      setTimeout(() => btn.classList.remove('shimmer'), 800);
-    }
-
-    // Badge pop
-    document.querySelectorAll('.cart-count').forEach(el => {
-      el.classList.remove('pop');
-      void el.offsetWidth;
-      el.classList.add('pop');
-      setTimeout(() => el.classList.remove('pop'), 500);
-    });
-
     const detail = newFree > 0
       ? `3×2 activo — ahorras ${formatPrice(newFree * price)}`
       : `${getCart().reduce((s,i)=>s+i.qty,0)} unidad${getCart().reduce((s,i)=>s+i.qty,0)>1?'es':''} en la cesta`;

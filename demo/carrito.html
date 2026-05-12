@@ -109,12 +109,18 @@
   .cart-items { display: flex; flex-direction: column; gap: 14px; }
   .cart-item {
     background: #fff;
-    border: 1.5px solid var(--line);
-    border-radius: var(--r-lg);
+    border: 2px solid var(--line);
+    border-radius: 22px;
     overflow: hidden;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s, border-color 0.3s, background 0.3s;
   }
   .cart-item:hover { box-shadow: 0 4px 20px rgba(26,31,42,0.07); }
+  .cart-item.promo-active {
+    border-color: rgba(232,169,60,0.6);
+    background: rgba(255,250,240,0.6);
+    box-shadow: 0 2px 20px rgba(232,169,60,0.1);
+  }
+  .cart-item.promo-active:hover { box-shadow: 0 4px 28px rgba(232,169,60,0.18); }
   .cart-item-main {
     display: grid; grid-template-columns: 90px 1fr auto auto;
     gap: 20px; align-items: center; padding: 20px 24px;
@@ -130,21 +136,16 @@
   .cart-item-variant { font-size: 13px; color: var(--ink-500); margin-bottom: 5px; }
   .cart-item-unit-price { font-size: 13px; color: var(--ink-700); font-weight: 500; }
 
-  /* 3×2 bar — inside the card, full width, at bottom */
-  .cart-item-promo {
-    display: flex; align-items: center; gap: 9px;
-    background: rgba(232,169,60,0.1);
-    border-top: 1px solid rgba(232,169,60,0.28);
-    padding: 10px 24px;
-    font-size: 13px; font-weight: 500;
-    color: #7a5200;
-  }
   .promo-mini-tag {
     background: var(--warning); color: var(--ink);
     font-size: 9px; font-weight: 800; letter-spacing: 0.05em;
     padding: 2px 7px; border-radius: 100px; flex-shrink: 0;
   }
-  .cart-item-promo [data-lucide] { width: 14px; height: 14px; color: var(--warning); flex-shrink: 0; }
+  .cart-item-promo-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 500; color: #7a5200;
+    margin-top: 6px;
+  }
 
   .cart-item-qty-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .cart-qty {
@@ -478,9 +479,8 @@
       const freeItems = Math.floor(item.qty / 3);
       const discount = freeItems * item.price;
       const lineTotal = item.qty * item.price - discount;
-      const freeLabel = freeItems === 1 ? '1 unidad gratis incluida' : `${freeItems} unidades gratis incluidas`;
-      const promoBar = freeItems > 0
-        ? `<div class="cart-item-promo"><span class="promo-mini-tag">3×2</span><i data-lucide="gift"></i>${freeLabel}</div>`
+      const promoBadge = freeItems > 0
+        ? `<div class="cart-item-promo-badge"><span class="promo-mini-tag">3×2</span>${freeItems === 1 ? '1 unidad gratis' : `${freeItems} unidades gratis`} · Ahorras ${formatPrice(discount)}</div>`
         : '';
       const originalHtml = discount > 0
         ? `<div class="cart-item-original">${formatPrice(item.qty * item.price)}</div>` : '';
@@ -488,15 +488,16 @@
         ? `<div class="cart-item-saving">Ahorras ${formatPrice(discount)}</div>` : '';
 
       return `
-        <div class="cart-item" data-idx="${idx}">
+        <div class="cart-item${freeItems > 0 ? ' promo-active' : ''}" data-idx="${idx}">
           <div class="cart-item-main">
             <div class="cart-item-img">
-              <img src="${item.img}" alt="${item.name}" onerror="this.src='foto-productos-barco.jpg'">
+              <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null;this.style.background='var(--bg-soft)'">
             </div>
             <div class="cart-item-info">
               <div class="cart-item-name">${item.name}</div>
               <div class="cart-item-variant">Formato: ${item.variant}</div>
               <div class="cart-item-unit-price">${formatPrice(item.price)} / unidad</div>
+              ${promoBadge}
             </div>
             <div class="cart-item-qty-wrap">
               <div class="cart-qty">
@@ -512,7 +513,6 @@
               ${savingHtml}
             </div>
           </div>
-          ${promoBar}
         </div>
       `;
     }).join('');
