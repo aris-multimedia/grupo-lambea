@@ -695,7 +695,10 @@
     border-color: rgba(74, 124, 89, 0.28);
     color: #2a6338;
   }
-  .promo-calc-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; line-height: 1; }
+  .promo-calc-icon { flex-shrink: 0; margin-top: 1px; display: flex; }
+  .promo-calc-icon [data-lucide] { width: 18px; height: 18px; stroke-width: 1.8; }
+  #promo-icon-inactive { color: var(--warning); }
+  #promo-icon-active { color: var(--success); }
 
   .cart-toast {
     position: fixed; bottom: 28px; right: 28px; z-index: 9999;
@@ -1130,7 +1133,10 @@
     </div>
 
     <div class="promo-calc" id="promo-calc">
-      <span class="promo-calc-icon" id="promo-calc-icon">🎁</span>
+      <span class="promo-calc-icon">
+        <i data-lucide="gift" id="promo-icon-inactive"></i>
+        <i data-lucide="check-circle" id="promo-icon-active" style="display:none"></i>
+      </span>
       <span id="promo-calc-text"></span>
     </div>
 
@@ -1415,19 +1421,22 @@
     const savings = freeItems * price;
     const calcEl = document.getElementById('promo-calc');
     const textEl = document.getElementById('promo-calc-text');
-    const iconEl = document.getElementById('promo-calc-icon');
+    const iconInactive = document.getElementById('promo-icon-inactive');
+    const iconActive = document.getElementById('promo-icon-active');
     const needed = qty % 3 === 0 ? 0 : 3 - (qty % 3);
 
     if (freeItems > 0) {
       calcEl.classList.add('active');
-      iconEl.textContent = '✓';
+      iconInactive.style.display = 'none';
+      iconActive.style.display = '';
       const freeLabel = freeItems === 1 ? '1 unidad gratis' : `${freeItems} unidades gratis`;
       textEl.innerHTML = needed === 0
         ? `<strong>¡3×2 activado!</strong> ${freeLabel} — ahorras <strong>${formatPrice(savings)}</strong>`
         : `<strong>3×2 activo</strong> — ${freeLabel}, ahorras ${formatPrice(savings)}. Añade <strong>${needed} más</strong> para otro gratis.`;
     } else {
       calcEl.classList.remove('active');
-      iconEl.textContent = '🎁';
+      iconInactive.style.display = '';
+      iconActive.style.display = 'none';
       textEl.innerHTML = qty === 1
         ? `Añade <strong>2 unidades más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`
         : `Añade <strong>1 unidad más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`;
