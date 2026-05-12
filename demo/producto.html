@@ -662,10 +662,11 @@
 
   .promo-banner {
     background: linear-gradient(135deg, rgba(232, 169, 60, 0.12) 0%, rgba(232, 169, 60, 0.06) 100%);
+    border: 1.5px solid rgba(232, 169, 60, 0.3);
     padding: 16px 20px;
     border-radius: var(--r-md);
     margin-bottom: 26px;
-    display: flex; align-items: center; gap: 14px;
+    display: flex; align-items: flex-start; gap: 14px;
     font-size: 14px;
   }
   .promo-banner-tag {
@@ -673,10 +674,56 @@
     font-size: 11px; font-weight: 700;
     padding: 6px 12px;
     border-radius: var(--r-pill);
-    flex-shrink: 0;
+    flex-shrink: 0; margin-top: 1px;
   }
   .promo-banner strong { color: var(--ink); }
-  .promo-banner [data-lucide] { width: 18px; height: 18px; color: var(--warning); flex-shrink: 0; }
+  .promo-banner [data-lucide] { width: 18px; height: 18px; color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+  .promo-banner-body { line-height: 1.5; }
+  .promo-banner-body small { display: block; font-size: 12px; color: var(--ink-500); margin-top: 3px; }
+
+  .promo-calc {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 13px 16px; border-radius: var(--r-md);
+    font-size: 13px; margin-top: 14px;
+    border: 1.5px solid var(--line);
+    background: var(--bg-soft);
+    transition: all 0.3s; line-height: 1.5;
+  }
+  .promo-calc.active {
+    background: rgba(74, 124, 89, 0.08);
+    border-color: rgba(74, 124, 89, 0.28);
+    color: #2a6338;
+  }
+  .promo-calc [data-lucide] { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+  .promo-calc.active [data-lucide] { color: var(--success); }
+
+  .cart-toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    background: #1A1F2A; color: #fff;
+    padding: 14px 18px; border-radius: 14px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    transform: translateY(90px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+    max-width: 360px;
+  }
+  .cart-toast.show { transform: translateY(0); opacity: 1; }
+  .cart-toast-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(79,181,232,0.15); color: #4FB5E8; flex-shrink: 0;
+  }
+  .cart-toast-icon [data-lucide] { width: 16px; height: 16px; }
+  .cart-toast-body { flex: 1; line-height: 1.4; }
+  .cart-toast-body span { display: block; font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 400; margin-top: 1px; }
+  .cart-toast-link {
+    color: #4FB5E8; font-weight: 700; text-decoration: none;
+    font-size: 13px; white-space: nowrap;
+    border-left: 1px solid rgba(255,255,255,0.15); padding-left: 14px;
+    transition: color 0.2s;
+  }
+  .cart-toast-link:hover { color: #fff; }
 
   .payment-methods {
     border-top: 1px solid var(--line);
@@ -982,7 +1029,7 @@
     <div class="header-actions">
       <button class="icon-btn" id="search-toggle"><i data-lucide="search"></i></button>
       <button class="icon-btn"><i data-lucide="user"></i></button>
-      <button class="cart-btn"><i data-lucide="shopping-bag"></i> Cesta <span class="cart-count">2</span></button>
+      <button class="cart-btn" id="cart-btn" onclick="location.href='carrito.html'"><i data-lucide="shopping-bag"></i> Cesta <span class="cart-count" id="cart-count">0</span></button>
     </div>
   </div>
 </header>
@@ -1065,19 +1112,27 @@
     <div class="promo-banner">
       <span class="promo-banner-tag">3×2</span>
       <i data-lucide="gift"></i>
-      <div><strong>Llévate 3 unidades pagando solo 2.</strong> Aplica automáticamente al carrito.</div>
+      <div class="promo-banner-body">
+        <strong>Llévate 3 unidades, paga solo 2.</strong>
+        <small>El descuento se calcula solo al añadir al carrito — sin códigos, sin complicaciones.</small>
+      </div>
     </div>
 
     <div class="buy-row">
       <div class="qty">
         <button><i data-lucide="minus"></i></button>
-        <input type="text" value="1">
+        <input type="text" value="1" id="qty-input">
         <button><i data-lucide="plus"></i></button>
       </div>
-      <button class="add-cart-btn">
+      <button class="add-cart-btn" id="add-cart-btn">
         <i data-lucide="shopping-cart"></i>
         Añadir a la cesta
       </button>
+    </div>
+
+    <div class="promo-calc" id="promo-calc">
+      <i data-lucide="tag"></i>
+      <span id="promo-calc-text">Añade <strong>2 unidades más</strong> y activa el 3×2 — te llevas 1 gratis</span>
     </div>
 
     <button class="buy-now-btn">
@@ -1332,40 +1387,115 @@
   </div>
 </footer>
 
-<script>
-  lucide.createIcons();
-  const sT = document.getElementById('search-toggle');
-  const sO = document.getElementById('search-overlay');
-  const sC = document.getElementById('search-close');
-  sT.addEventListener('click', () => { sO.classList.add('open'); setTimeout(() => sO.querySelector('input').focus(), 100); });
-  sC.addEventListener('click', () => sO.classList.remove('open'));
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') sO.classList.remove('open'); });
+<div class="cart-toast" id="cart-toast">
+  <div class="cart-toast-icon"><i data-lucide="check"></i></div>
+  <div class="cart-toast-body">
+    <strong>Añadido a la cesta</strong>
+    <span id="toast-detail"></span>
+  </div>
+  <a href="carrito.html" class="cart-toast-link">Ver cesta →</a>
+</div>
 
+<script>
+  // --- CART UTILITIES ---
+  const CART_KEY = 'lambea_cart';
+  function getCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch(e) { return []; } }
+  function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(); }
+  function updateCartBadge() {
+    const total = getCart().reduce((s, i) => s + i.qty, 0);
+    document.querySelectorAll('.cart-count').forEach(el => el.textContent = total);
+  }
+  function parsePrice(str) { return parseFloat(str.replace(/[€\s]/g, '').replace(',', '.')); }
+  function formatPrice(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+
+  // --- PROMO CALC ---
+  function updatePromoCalc() {
+    const qty = parseInt(document.getElementById('qty-input').value) || 1;
+    const price = parsePrice(document.querySelector('.price-current').textContent);
+    const freeItems = Math.floor(qty / 3);
+    const savings = freeItems * price;
+    const calcEl = document.getElementById('promo-calc');
+    const textEl = document.getElementById('promo-calc-text');
+    const needed = qty % 3 === 0 ? 0 : 3 - (qty % 3);
+
+    if (freeItems > 0) {
+      calcEl.className = 'promo-calc active';
+      const freeLabel = freeItems === 1 ? '1 unidad gratis' : freeItems + ' unidades gratis';
+      if (needed === 0) {
+        textEl.innerHTML = `<strong>¡3×2 activado!</strong> ${freeLabel} — ahorras <strong>${formatPrice(savings)}</strong>`;
+      } else {
+        textEl.innerHTML = `<strong>3×2 activo</strong> — ${freeLabel}, ahorras ${formatPrice(savings)}. Añade <strong>${needed} más</strong> para otro gratis.`;
+      }
+    } else {
+      calcEl.className = 'promo-calc';
+      const text = qty === 1
+        ? `Añade <strong>2 unidades más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`
+        : `Añade <strong>1 unidad más</strong> y activa el 3×2 — te llevas 1 gratis (${formatPrice(price)})`;
+      textEl.innerHTML = text;
+    }
+  }
+
+  // --- QTY BUTTONS ---
+  document.querySelectorAll('.qty button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById('qty-input');
+      let val = parseInt(input.value) || 1;
+      if (btn.querySelector('[data-lucide="plus"]')) val++; else val = Math.max(1, val - 1);
+      input.value = val;
+      updatePromoCalc();
+    });
+  });
+
+  // --- VARIANT SELECTION ---
   document.querySelectorAll('.variant').forEach(v => {
     v.addEventListener('click', () => {
       document.querySelectorAll('.variant').forEach(x => x.classList.remove('active'));
       v.classList.add('active');
-      const name = v.firstChild.textContent.trim();
-      const price = v.querySelector('.variant-price').textContent;
-      document.querySelector('.option-label .selected strong').textContent = name;
-      document.querySelector('.price-current').textContent = price;
+      document.querySelector('.option-label .selected strong').textContent = v.firstChild.textContent.trim();
+      document.querySelector('.price-current').textContent = v.querySelector('.variant-price').textContent;
+      updatePromoCalc();
     });
   });
-  document.querySelectorAll('.qty button').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const input = btn.parentElement.querySelector('input');
-      let val = parseInt(input.value) || 1;
-      const isPlus = btn.querySelector('[data-lucide="plus"]');
-      if (isPlus) val++; else val = Math.max(1, val - 1);
-      input.value = val;
-    });
+
+  // --- ADD TO CART ---
+  document.getElementById('add-cart-btn').addEventListener('click', () => {
+    const qty = parseInt(document.getElementById('qty-input').value) || 1;
+    const price = parsePrice(document.querySelector('.price-current').textContent);
+    const variant = document.querySelector('.option-label .selected strong').textContent;
+    const id = 'desoxilam-nautico-' + variant.toLowerCase().replace(/[\s\/]/g, '-');
+    const cart = getCart();
+    const existing = cart.find(i => i.id === id);
+    if (existing) { existing.qty += qty; } else {
+      cart.push({
+        id, qty, price,
+        name: 'Desoxilam Náutico',
+        variant,
+        img: 'https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?auto=format&fit=crop&w=400&q=80'
+      });
+    }
+    saveCart(cart);
+
+    const totalQty = cart.find(i => i.id === id).qty;
+    const freeNow = Math.floor(totalQty / 3);
+    const detail = freeNow > 0
+      ? `3×2 activo — ahorras ${formatPrice(freeNow * price)}`
+      : `${getCart().reduce((s,i)=>s+i.qty,0)} unidad${getCart().reduce((s,i)=>s+i.qty,0)>1?'es':''} en la cesta`;
+    document.getElementById('toast-detail').textContent = detail;
+    const toast = document.getElementById('cart-toast');
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 3800);
   });
+
+  // --- TABS ---
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
     });
   });
+
+  // --- GALLERY THUMBS ---
   document.querySelectorAll('.thumb').forEach(t => {
     t.addEventListener('click', () => {
       document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
@@ -1376,6 +1506,19 @@
       main.src = img.src;
     });
   });
+
+  // --- SEARCH ---
+  const sT = document.getElementById('search-toggle');
+  const sO = document.getElementById('search-overlay');
+  const sC = document.getElementById('search-close');
+  sT.addEventListener('click', () => { sO.classList.add('open'); setTimeout(() => sO.querySelector('input').focus(), 100); });
+  sC.addEventListener('click', () => sO.classList.remove('open'));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') sO.classList.remove('open'); });
+
+  // --- INIT ---
+  lucide.createIcons();
+  updateCartBadge();
+  updatePromoCalc();
 </script>
 
 </body>

@@ -1170,7 +1170,7 @@
     <div class="header-actions">
       <button class="icon-btn" id="search-toggle"><i data-lucide="search"></i></button>
       <button class="icon-btn"><i data-lucide="user"></i></button>
-      <button class="cart-btn"><i data-lucide="shopping-bag"></i> Cesta <span class="cart-count">2</span></button>
+      <button class="cart-btn" onclick="location.href='carrito.html'"><i data-lucide="shopping-bag"></i> Cesta <span class="cart-count" id="cart-count">0</span></button>
     </div>
   </div>
 </header>
@@ -1544,6 +1544,8 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // Cart badge from localStorage
+  try { const c=JSON.parse(localStorage.getItem('lambea_cart'))||[]; const t=c.reduce((s,i)=>s+i.qty,0); const el=document.getElementById('cart-count'); if(el) el.textContent=t; } catch(e) {}
 </script>
 
 </body>
