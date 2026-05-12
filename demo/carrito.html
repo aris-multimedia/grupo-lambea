@@ -48,14 +48,19 @@
 
   /* Header */
   header.main { background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
-  .header-inner { max-width: 1320px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+  .header-inner { max-width: 1320px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
   .logo-wrap { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-  .logo-icon { width: 42px; height: 42px; background: var(--blue-deep); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; }
-  .logo-icon [data-lucide] { width: 22px; height: 22px; }
+  .logo-wrap img { height: 52px; width: auto; display: block; }
   .logo-text { font-family: 'Lora', serif; font-weight: 600; font-size: 20px; color: var(--ink); letter-spacing: -0.02em; }
   .logo-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-500); font-weight: 500; }
+  nav.primary { display: flex; gap: 0; align-items: center; }
+  nav.primary > a {
+    color: var(--ink-700); text-decoration: none; font-size: 14px;
+    font-weight: 600; padding: 10px 16px; transition: color 0.2s; border-radius: 8px;
+  }
+  nav.primary > a:hover { color: var(--blue); background: var(--bg-soft); }
   .header-actions { display: flex; align-items: center; gap: 10px; }
-  .icon-btn { background: none; border: none; cursor: pointer; padding: 10px; color: var(--ink-700); border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; }
+  .icon-btn { background: none; border: none; cursor: pointer; padding: 10px; color: var(--ink-700); border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; min-width: 40px; min-height: 40px; justify-content: center; }
   .icon-btn:hover { background: var(--bg-soft); color: var(--ink); }
   .cart-btn { display: flex; align-items: center; gap: 9px; background: var(--blue); color: #fff; border: none; padding: 10px 20px; border-radius: var(--r-pill); cursor: pointer; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.2s; }
   .cart-btn:hover { background: var(--blue-dark); }
@@ -101,35 +106,45 @@
   }
 
   /* Cart items */
-  .cart-items { display: flex; flex-direction: column; gap: 0; }
-  .cart-items-header {
-    display: grid; grid-template-columns: 1fr auto auto auto;
-    gap: 20px; padding: 0 0 14px; border-bottom: 2px solid var(--ink);
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--ink-500); font-weight: 600;
-  }
+  .cart-items { display: flex; flex-direction: column; gap: 14px; }
   .cart-item {
-    display: grid; grid-template-columns: 80px 1fr auto auto;
-    gap: 20px; align-items: center;
-    padding: 24px 0; border-bottom: 1px solid var(--line);
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .cart-item:hover { box-shadow: 0 4px 20px rgba(26,31,42,0.07); }
+  .cart-item-main {
+    display: grid; grid-template-columns: 90px 1fr auto auto;
+    gap: 20px; align-items: center; padding: 20px 24px;
   }
   .cart-item-img {
-    width: 80px; height: 80px; border-radius: var(--r-md);
+    width: 90px; height: 90px; border-radius: var(--r-md);
     overflow: hidden; background: var(--bg-soft);
     border: 1px solid var(--line); flex-shrink: 0;
   }
   .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
   .cart-item-info { min-width: 0; }
   .cart-item-name { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
-  .cart-item-variant { font-size: 13px; color: var(--ink-500); margin-bottom: 6px; }
-  .cart-item-unit-price { font-size: 13px; color: var(--ink-700); }
+  .cart-item-variant { font-size: 13px; color: var(--ink-500); margin-bottom: 5px; }
+  .cart-item-unit-price { font-size: 13px; color: var(--ink-700); font-weight: 500; }
+
+  /* 3×2 bar — inside the card, full width, at bottom */
   .cart-item-promo {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(74,124,89,0.1); color: #2a6338;
-    border-radius: var(--r-pill); padding: 4px 10px;
-    font-size: 12px; font-weight: 600; margin-top: 8px;
+    display: flex; align-items: center; gap: 9px;
+    background: rgba(232,169,60,0.1);
+    border-top: 1px solid rgba(232,169,60,0.28);
+    padding: 10px 24px;
+    font-size: 13px; font-weight: 500;
+    color: #7a5200;
   }
-  .cart-item-promo [data-lucide] { width: 13px; height: 13px; }
+  .promo-mini-tag {
+    background: var(--warning); color: var(--ink);
+    font-size: 9px; font-weight: 800; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 100px; flex-shrink: 0;
+  }
+  .cart-item-promo [data-lucide] { width: 14px; height: 14px; color: var(--warning); flex-shrink: 0; }
 
   .cart-item-qty-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .cart-qty {
@@ -138,9 +153,10 @@
     overflow: hidden; background: #fff;
   }
   .cart-qty button {
-    background: none; border: none; padding: 10px 14px;
+    background: none; border: none; padding: 11px 14px;
     cursor: pointer; color: var(--ink-700); transition: all 0.2s;
     display: flex; align-items: center; justify-content: center;
+    min-width: 40px; min-height: 40px;
   }
   .cart-qty button:hover { background: var(--blue-soft); color: var(--blue); }
   .cart-qty button [data-lucide] { width: 13px; height: 13px; stroke-width: 2.5; }
@@ -148,26 +164,15 @@
   .cart-item-remove {
     background: none; border: none; cursor: pointer;
     font-size: 12px; color: var(--ink-500); display: flex; align-items: center; gap: 5px;
-    padding: 4px 0; transition: color 0.2s; font-family: 'Inter', sans-serif;
+    padding: 6px 0; min-height: 24px; transition: color 0.2s; font-family: 'Inter', sans-serif;
   }
   .cart-item-remove:hover { color: #c0392b; }
   .cart-item-remove [data-lucide] { width: 13px; height: 13px; }
 
-  .cart-item-prices { text-align: right; min-width: 90px; }
+  .cart-item-prices { text-align: right; min-width: 96px; }
   .cart-item-original { font-size: 13px; color: var(--ink-500); text-decoration: line-through; }
-  .cart-item-total { font-size: 20px; font-weight: 700; color: var(--ink); font-family: 'Lora', serif; }
-  .cart-item-saving { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 3px; }
-
-  /* 3x2 banner across cart */
-  .cart-promo-strip {
-    background: linear-gradient(135deg, rgba(232,169,60,0.1), rgba(232,169,60,0.04));
-    border: 1.5px solid rgba(232,169,60,0.3);
-    border-radius: var(--r-md); padding: 14px 18px;
-    display: flex; align-items: center; gap: 12px;
-    font-size: 13.5px; margin-bottom: 24px;
-  }
-  .cart-promo-strip-tag { background: var(--warning); color: var(--ink); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--r-pill); flex-shrink: 0; }
-  .cart-promo-strip [data-lucide] { width: 16px; height: 16px; color: var(--warning); flex-shrink: 0; }
+  .cart-item-total { font-size: 22px; font-weight: 700; color: var(--ink); font-family: 'Lora', serif; margin-top: 1px; }
+  .cart-item-saving { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 4px; }
 
   /* Summary sidebar */
   .cart-summary {
@@ -245,19 +250,23 @@
   .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s, transform 0.7s; }
   .reveal.in { opacity: 1; transform: translateY(0); }
 
+  @media (max-width: 1100px) {
+    nav.primary { display: none; }
+  }
   @media (max-width: 900px) {
     .cart-content { grid-template-columns: 1fr; }
     .cart-summary { position: static; }
-    .cart-item { grid-template-columns: 70px 1fr auto; }
+    .cart-item-main { grid-template-columns: 80px 1fr auto; }
     .cart-item-prices { display: none; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
   }
   @media (max-width: 600px) {
-    .cart-page { padding: 32px 20px 60px; }
+    .cart-page { padding: 28px 16px 60px; }
     .topbar-center { display: none; }
     .topbar-left .topbar-item:nth-child(2), .topbar-right .topbar-item { display: none; }
-    .cart-item { grid-template-columns: 64px 1fr; gap: 14px; }
+    .cart-item-main { grid-template-columns: 72px 1fr; gap: 14px; }
     .cart-item-qty-wrap { display: none; }
+    .cart-item-promo { padding: 10px 16px; }
     .footer-grid { grid-template-columns: 1fr; gap: 32px; }
     .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   }
@@ -283,14 +292,22 @@
 <header class="main">
   <div class="header-inner">
     <a href="index.html" class="logo-wrap">
-      <div class="logo-icon"><i data-lucide="anchor"></i></div>
-      <div>
+      <img src="logo-grupolambea-nuevo.png" alt="Grupo Lambea" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div style="display:none">
         <div class="logo-text">Grupo Lambea</div>
         <div class="logo-sub">Soluciones Ecolam S.L.</div>
       </div>
     </a>
+    <nav class="primary">
+      <a href="index.html">Inicio</a>
+      <a href="producto.html">Náutica</a>
+      <a href="#">Caravaning</a>
+      <a href="#">Industrial</a>
+      <a href="#">Hípica</a>
+    </nav>
     <div class="header-actions">
-      <a href="index.html" class="icon-btn" title="Seguir comprando"><i data-lucide="arrow-left"></i></a>
+      <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+      <button class="icon-btn" title="Mi cuenta"><i data-lucide="user"></i></button>
       <button class="cart-btn" onclick="location.href='carrito.html'"><i data-lucide="shopping-bag"></i> Cesta <span class="cart-count" id="cart-count">0</span></button>
     </div>
   </div>
@@ -318,13 +335,6 @@
   <!-- Cart with items -->
   <div class="cart-content" id="cart-content">
     <div>
-      <!-- 3x2 promo strip -->
-      <div class="cart-promo-strip" id="promo-strip" style="display:none">
-        <span class="cart-promo-strip-tag">3×2</span>
-        <i data-lucide="gift"></i>
-        <span id="promo-strip-text"></span>
-      </div>
-
       <div class="cart-items" id="cart-items"></div>
 
       <a href="producto.html" style="display:inline-flex;align-items:center;gap:8px;margin-top:24px;color:var(--blue-dark);font-size:13px;font-weight:500;text-decoration:none;">
@@ -468,8 +478,9 @@
       const freeItems = Math.floor(item.qty / 3);
       const discount = freeItems * item.price;
       const lineTotal = item.qty * item.price - discount;
-      const promoHtml = freeItems > 0
-        ? `<div class="cart-item-promo"><i data-lucide="gift"></i>${freeItems === 1 ? '1 unidad gratis' : freeItems + ' unidades gratis'}</div>`
+      const freeLabel = freeItems === 1 ? '1 unidad gratis incluida' : `${freeItems} unidades gratis incluidas`;
+      const promoBar = freeItems > 0
+        ? `<div class="cart-item-promo"><span class="promo-mini-tag">3×2</span><i data-lucide="gift"></i>${freeLabel}</div>`
         : '';
       const originalHtml = discount > 0
         ? `<div class="cart-item-original">${formatPrice(item.qty * item.price)}</div>` : '';
@@ -478,28 +489,30 @@
 
       return `
         <div class="cart-item" data-idx="${idx}">
-          <div class="cart-item-img">
-            <img src="${item.img}" alt="${item.name}" onerror="this.src='foto-productos-barco.jpg'">
-          </div>
-          <div class="cart-item-info">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-variant">Formato: ${item.variant}</div>
-            <div class="cart-item-unit-price">${formatPrice(item.price)} / unidad</div>
-            ${promoHtml}
-          </div>
-          <div class="cart-item-qty-wrap">
-            <div class="cart-qty">
-              <button class="qty-dec" data-idx="${idx}"><i data-lucide="minus"></i></button>
-              <span>${item.qty}</span>
-              <button class="qty-inc" data-idx="${idx}"><i data-lucide="plus"></i></button>
+          <div class="cart-item-main">
+            <div class="cart-item-img">
+              <img src="${item.img}" alt="${item.name}" onerror="this.src='foto-productos-barco.jpg'">
             </div>
-            <button class="cart-item-remove" data-idx="${idx}"><i data-lucide="trash-2"></i> Eliminar</button>
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-variant">Formato: ${item.variant}</div>
+              <div class="cart-item-unit-price">${formatPrice(item.price)} / unidad</div>
+            </div>
+            <div class="cart-item-qty-wrap">
+              <div class="cart-qty">
+                <button class="qty-dec" data-idx="${idx}"><i data-lucide="minus"></i></button>
+                <span>${item.qty}</span>
+                <button class="qty-inc" data-idx="${idx}"><i data-lucide="plus"></i></button>
+              </div>
+              <button class="cart-item-remove" data-idx="${idx}"><i data-lucide="trash-2"></i> Eliminar</button>
+            </div>
+            <div class="cart-item-prices">
+              ${originalHtml}
+              <div class="cart-item-total">${formatPrice(lineTotal)}</div>
+              ${savingHtml}
+            </div>
           </div>
-          <div class="cart-item-prices">
-            ${originalHtml}
-            <div class="cart-item-total">${formatPrice(lineTotal)}</div>
-            ${savingHtml}
-          </div>
+          ${promoBar}
         </div>
       `;
     }).join('');
@@ -507,7 +520,6 @@
     lucide.createIcons();
     bindItemButtons();
     updateSummary();
-    updatePromoStrip();
   }
 
   function updateSummary() {
@@ -530,24 +542,6 @@
       document.getElementById('summary-discount').textContent = '−' + formatPrice(discount);
     } else {
       discountRow.style.display = 'none';
-    }
-  }
-
-  function updatePromoStrip() {
-    const cart = getCart();
-    const strip = document.getElementById('promo-strip');
-    const stripText = document.getElementById('promo-strip-text');
-    let totalFree = 0, totalSavings = 0;
-    cart.forEach(i => {
-      const f = Math.floor(i.qty / 3);
-      totalFree += f;
-      totalSavings += f * i.price;
-    });
-    if (totalFree > 0) {
-      strip.style.display = 'flex';
-      stripText.innerHTML = `<strong>3×2 aplicado</strong> — ${totalFree === 1 ? '1 unidad gratis' : totalFree + ' unidades gratis'} en tu pedido. Ahorras <strong>${formatPrice(totalSavings)}</strong> respecto al precio normal.`;
-    } else {
-      strip.style.display = 'none';
     }
   }
 
