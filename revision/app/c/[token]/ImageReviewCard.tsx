@@ -49,7 +49,7 @@ export function ImageReviewCard({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const firstRender = useRef(true)
 
-  // Auto-save al cambiar estado o comentario (debounced 800 ms)
+  // Auto-save al cambiar estado o comentario (debounced 600 ms)
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false
@@ -60,16 +60,25 @@ export function ImageReviewCard({
     debounceRef.current = setTimeout(() => {
       startTransition(async () => {
         const result = await saveFeedbackAction({ token, slug, estado, comentario })
-        setStatus(result.ok ? 'saved' : 'error')
         if (result.ok) {
-          setTimeout(() => setStatus('idle'), 1500)
+          setStatus('saved')
+          // Toast global
+          window.dispatchEvent(new CustomEvent('feedback-saved', {
+            detail: { message: `Guardado · ${familia} ${categoria}`, kind: 'success' },
+          }))
+          setTimeout(() => setStatus('idle'), 2500)
+        } else {
+          setStatus('error')
+          window.dispatchEvent(new CustomEvent('feedback-saved', {
+            detail: { message: `Error al guardar ${familia}`, kind: 'error' },
+          }))
         }
       })
-    }, 800)
+    }, 600)
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [estado, comentario, token, slug])
+  }, [estado, comentario, token, slug, familia, categoria])
 
   function handleEstadoClick(e: Estado) {
     setEstado((prev) => (prev === e ? null : e))
@@ -100,16 +109,33 @@ export function ImageReviewCard({
           </div>
         </div>
 
-        {/* Save status indicator */}
-        <div className="text-[12px] flex items-center gap-1.5 min-h-[20px]">
-          {status === 'saving' && (
-            <>
-              <Loader2 size={13} className="animate-spin text-slate-400" />
-              <span className="text-slate-400">Guardando…</span>
-            </>
+        {/* Save status indicator — badge prominente */}
+        <div className="min-h-[30px] flex items-center">
+          {status === 'idle' && (
+            <span className="text-[11px] uppercase tracking-wider font-bold text-slate-400 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200">
+              Sin cambios
+            </span>
           )}
-          {status === 'saved' && <span className="text-emerald-600">✓ Guardado</span>}
-          {status === 'error' && <span className="text-red-600">Error al guardar</span>}
+          {status === 'saving' && (
+            <span className="text-[11px] uppercase tracking-wider font-bold text-amber-700 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 flex items-center gap-1.5">
+              <Loader2 size={12} className="animate-spin" strokeWidth={2.5} />
+              Guardando
+            </span>
+          )}
+          {status === 'saved' && (
+            <span
+              className="text-[11px] uppercase tracking-wider font-bold text-white px-2.5 py-1 rounded-full flex items-center gap-1.5"
+              style={{ background: '#16a34a', animation: 'save-pulse 1s ease-out' }}
+            >
+              <Check size={12} strokeWidth={3} />
+              Guardado
+            </span>
+          )}
+          {status === 'error' && (
+            <span className="text-[11px] uppercase tracking-wider font-bold text-white bg-red-600 px-2.5 py-1 rounded-full">
+              ⚠ Error
+            </span>
+          )}
         </div>
       </header>
 
@@ -134,12 +160,19 @@ export function ImageReviewCard({
             return (
               <button
                 key={e}
-                onClick={() => handleEstadoClick(e)}
+                onClick={(ev) => {
+                  // Pop animation
+                  ev.currentTarget.style.animation = 'none'
+                  void ev.currentTarget.offsetWidth
+                  ev.currentTarget.style.animation = 'button-pop 0.18s ease-out'
+                  handleEstadoClick(e)
+                }}
                 className="flex items-center justify-center gap-2 py-3 px-2 rounded-lg text-[14px] font-semibold transition-all cursor-pointer"
                 style={{
                   background: selected ? bgSelected : '#f8fafc',
                   border: `1.5px solid ${selected ? border : '#e2e8ef'}`,
                   color: selected ? color : '#64748b',
+                  boxShadow: selected ? `0 4px 12px ${color}25` : 'none',
                 }}
               >
                 <Icon size={16} strokeWidth={2.5} />

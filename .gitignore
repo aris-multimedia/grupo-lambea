@@ -35,7 +35,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+<<<<<<< Updated upstream
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+=======
+.gstack/
+>>>>>>> Stashed changes
