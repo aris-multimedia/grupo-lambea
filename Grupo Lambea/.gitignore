@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .gstack/
+
+# notas / secretos locales (NUNCA subir a git)
+*.local.md
+*.local.docx
+*.local.pdf
+*.local.txt

@@ -1,6 +1,7 @@
 'use server'
 
 import { z } from 'zod'
+import { sendContactAckEmail } from '@/lib/email'
 
 // Validación del formulario de contacto. Email vía regex para no depender de la
 // API de zod (que cambió entre v3/v4); honeypot anti-spam en `empresa_web`.
@@ -87,6 +88,8 @@ export async function sendContactMessage(formData: FormData): Promise<ContactRes
       }),
     })
     if (!res.ok) return { ok: false, reason: 'error' }
+    // Acuse de recibo al visitante (best-effort, no bloquea la respuesta).
+    await sendContactAckEmail({ nombre, email }).catch(() => {})
     return { ok: true }
   } catch {
     return { ok: false, reason: 'error' }

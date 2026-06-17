@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { subtotal, freeUnitsFor } from '@/lib/cart';
@@ -55,9 +56,11 @@ export default function CarritoPage() {
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[var(--blue-soft)] rounded-lg flex-shrink-0 overflow-hidden">
                     {item.imagen ? (
-                      <img
+                      <Image
                         src={item.imagen}
                         alt={item.familia}
+                        width={80}
+                        height={80}
                         className="w-full h-full object-contain p-1"
                       />
                     ) : (

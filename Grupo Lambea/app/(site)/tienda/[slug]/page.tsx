@@ -126,11 +126,25 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     }),
   }
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://grupolambea.com' },
+      { '@type': 'ListItem', position: 2, name: 'Tienda', item: 'https://grupolambea.com/tienda' },
+      { '@type': 'ListItem', position: 3, name: product.familia, item: `https://grupolambea.com/tienda/${product.slug}` },
+    ],
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Breadcrumb */}

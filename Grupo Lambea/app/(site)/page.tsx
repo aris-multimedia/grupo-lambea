@@ -178,7 +178,7 @@ export default async function HomePage() {
         <div className="max-w-[1320px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-7">
           {[
             { Icon: ShieldCheck, title: 'Compra 100% segura', sub: 'Pagos cifrados' },
-            { Icon: Truck, title: 'Envío gratis a Península', sub: `Envío a Baleares: ${envio.coste_baleares}` },
+            { Icon: Truck, title: envio.texto_peninsula, sub: `Envío a Baleares: ${envio.coste_baleares}` },
             { Icon: PhoneCall, title: 'Atención cercana', sub: 'Te llamamos si lo necesitas' },
             { Icon: RotateCcw, title: 'Devolución 14 días', sub: 'Reintegro íntegro' },
           ].map(({ Icon, title, sub }) => (

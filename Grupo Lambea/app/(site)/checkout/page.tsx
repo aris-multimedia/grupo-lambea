@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Lock, ShoppingBag, Tag, Building2, User } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { subtotal } from '@/lib/cart';
@@ -319,7 +320,7 @@ export default function CheckoutPage() {
                 >
                   <div className="w-10 h-10 bg-[var(--blue-soft)] rounded-md overflow-hidden flex-shrink-0">
                     {item.imagen ? (
-                      <img src={item.imagen} alt={item.familia} className="w-full h-full object-contain p-0.5" />
+                      <Image src={item.imagen} alt={item.familia} width={40} height={40} className="w-full h-full object-contain p-0.5" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[var(--ink-300)]">
                         <ShoppingBag size={14} />

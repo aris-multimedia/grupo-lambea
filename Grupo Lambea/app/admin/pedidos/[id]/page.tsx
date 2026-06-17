@@ -1,9 +1,10 @@
 import { sql } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Package, User, MapPin, FileText, MessageCircle, CreditCard } from 'lucide-react';
-import { updateOrderStatus } from '@/app/actions/orders';
+import { ArrowLeft, Package, User, MapPin, FileText, MessageCircle, CreditCard, Truck } from 'lucide-react';
+import { updateOrderStatus, updateOrderTracking } from '@/app/actions/orders';
 import { phoneDigits } from '@/lib/settings-schema';
+import { getOrderWeightGrams } from '@/lib/shipping';
 import { Card, StatusPill, ORDER_STATUS, orderBadge } from '../../_components/layout';
 
 export default async function PedidoDetailPage({
@@ -30,7 +31,10 @@ export default async function PedidoDetailPage({
   const estado = String(o.estado);
   const badge = orderBadge(estado);
 
+  const pesoGramos = await getOrderWeightGrams(Number(id)).catch(() => 0);
+
   const changeStatus = updateOrderStatus.bind(null, Number(id));
+  const saveTracking = updateOrderTracking.bind(null, Number(id));
 
   return (
     <div>
@@ -127,6 +131,41 @@ export default async function PedidoDetailPage({
           </Card>
         </div>
       )}
+
+      {/* Envío: tracking manual (hasta integrar GENEI) + peso estimado */}
+      <div className="mb-6">
+        <Card title="Envío" icon={<Truck size={14} />}>
+          <div className="space-y-3 text-[14px]">
+            {pesoGramos > 0 && (
+              <div className="text-(--ink-700)">
+                <span className="text-(--ink-500)">Peso estimado del paquete:</span>{' '}
+                <span className="font-semibold text-(--ink)">
+                  {pesoGramos >= 1000 ? `${(pesoGramos / 1000).toFixed(2).replace('.', ',')} kg` : `${pesoGramos} g`}
+                </span>
+              </div>
+            )}
+            <form action={saveTracking as unknown as (formData: FormData) => void} className="flex flex-wrap items-center gap-2">
+              <input
+                type="url"
+                name="tracking_url"
+                defaultValue={o.tracking_url ? String(o.tracking_url) : ''}
+                placeholder="https://… enlace de seguimiento del transportista"
+                className="flex-1 min-w-[260px] border border-[#d7dde6] rounded-(--r-sm) px-3 py-2 text-[13px] text-(--ink) outline-none focus:border-(--blue) bg-white"
+              />
+              <button
+                type="submit"
+                className="bg-blue hover:bg-blue-dark text-white text-[13px] font-semibold px-4 py-2 rounded-(--r-sm) transition-colors cursor-pointer"
+              >
+                Guardar
+              </button>
+            </form>
+            <p className="text-[12px] text-(--ink-500)">
+              Guárdalo antes de marcar el pedido como «Enviado»: el enlace se incluye en el
+              email «tu pedido va de camino» que recibe el cliente.
+            </p>
+          </div>
+        </Card>
+      </div>
 
       {/* Order items */}
       <div className="mb-6" id="items">

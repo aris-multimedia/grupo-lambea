@@ -11,6 +11,8 @@ import Stripe from 'stripe';
 import { stripe, stripeConfigured } from '@/lib/stripe';
 import { priceCart } from '@/lib/checkout';
 import { issueInvoiceForOrder } from '@/lib/invoicing';
+import { restoreStockForOrder } from '@/lib/stock';
+import { sendOrderShippedEmail } from '@/lib/email';
 
 const CheckoutSchema = z.object({
   nombre: z.string().min(2),
@@ -190,6 +192,16 @@ export async function createCheckoutSession(
   }
   const { items, discount, total } = priced;
 
+  // Anti-sobreventa: no se llega a Stripe si alguna línea supera el stock real.
+  const sinStock = items.find((i) => i.stock !== null && i.cantidad > i.stock);
+  if (sinStock) {
+    return {
+      error: sinStock.stock && sinStock.stock > 0
+        ? `No queda stock suficiente de ${sinStock.familia} (${sinStock.formato}): quedan ${sinStock.stock} unidades.`
+        : `${sinStock.familia} (${sinStock.formato}) está agotado ahora mismo. Quítalo de la cesta para continuar.`,
+    };
+  }
+
   const date = new Date();
   const datePart = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
   const numeroPedido = `${datePart}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -262,10 +274,26 @@ async function applyStatusChange(orderId: number, estado: string) {
   await sql`UPDATE orders SET estado = ${estado} WHERE id = ${orderId}`;
   // Sellos de tiempo del ciclo de vida (para el panel de pedidos).
   if (estado === 'enviado') {
-    await sql`UPDATE orders SET enviado_at = COALESCE(enviado_at, now()) WHERE id = ${orderId}`;
+    const [row] = await sql`
+      UPDATE orders SET enviado_at = COALESCE(enviado_at, now()) WHERE id = ${orderId}
+      RETURNING numero_pedido, cliente_nombre, cliente_email, tracking_url
+    `;
+    // Aviso "tu pedido va de camino" (+ tracking si GENEI lo ha rellenado).
+    if (row) {
+      await sendOrderShippedEmail({
+        numero: String(row.numero_pedido),
+        nombre: String(row.cliente_nombre),
+        email: String(row.cliente_email),
+        trackingUrl: row.tracking_url ? String(row.tracking_url) : null,
+      }).catch(() => {});
+    }
   }
   if (estado === 'entregado') {
     await sql`UPDATE orders SET entregado_at = COALESCE(entregado_at, now()) WHERE id = ${orderId}`;
+  }
+  // Pedido anulado o devuelto → el género vuelve al almacén (idempotente).
+  if (estado === 'cancelado' || estado === 'reembolsado') {
+    await restoreStockForOrder(orderId).catch(() => {});
   }
   // Al COMPLETAR (entregado y aceptado), si el cliente pidió factura se intenta
   // emitir automáticamente. Hoy queda 'pendiente' hasta integrar Verifactu;
@@ -294,6 +322,21 @@ export async function changeOrderStatus(orderId: number, estado: string) {
   }
   await applyStatusChange(orderId, estado);
   return { ok: true };
+}
+
+/**
+ * Guarda el enlace de seguimiento del envío (manual hasta integrar GENEI).
+ * Se incluye en el email "tu pedido va de camino" al pasar a 'enviado',
+ * así que conviene rellenarlo ANTES de cambiar el estado.
+ */
+export async function updateOrderTracking(orderId: number, formData: FormData) {
+  const raw = String(formData.get('tracking_url') ?? '').trim();
+  if (raw && !/^https?:\/\//i.test(raw)) {
+    return { error: 'El enlace de seguimiento debe empezar por http:// o https://' };
+  }
+  await sql`UPDATE orders SET tracking_url = ${raw || null}, updated_at = now() WHERE id = ${orderId}`;
+  revalidatePath(`/admin/pedidos/${orderId}`);
+  redirect(`/admin/pedidos/${orderId}`);
 }
 
 /** Emite la factura de un pedido (botón del admin). Respeta el gating. */

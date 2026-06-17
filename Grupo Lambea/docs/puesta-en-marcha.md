@@ -25,7 +25,7 @@ envío (GENEI), envío de emails (Resend) y la facturación. Todo lo de abajo.
 > Marca cada uno según se vaya consiguiendo en la reunión.
 
 ### [ ] 1. Stripe — cobros  *(cuenta del cliente)*
-- El cliente crea la cuenta a nombre de **TECNICLAM 2016 SL**, completa el KYC (CIF + DNI del representante) y mete su **IBAN**.
+- El cliente crea la cuenta a nombre de **SOLUCIONES ECOLAM S.L (CIF B55380679)**, completa el KYC (CIF + DNI del representante) y mete su **IBAN**.
 - **Me entrega:** acceso como **Developer** a su cuenta, **o** las claves `sk_` y `pk_` (test + live).
 - El **webhook secret** (`whsec_…`) lo genero yo en su panel.
 - Notas: precios con **IVA 21% incluido**. La factura **NO** la hace Stripe (la hace el gestor). Opcional: subir su logo a Stripe.

@@ -80,6 +80,11 @@ export function ProductViewer({
   const selectedVariant = sorted[variantIdx] ?? null
   const mainImage = activeImageUrl ?? selectedVariant?.imagen_url ?? imagenDefault
 
+  // Stock de la variante seleccionada (null = producto sin control de stock)
+  const stockSel = selectedVariant ? selectedVariant.stock : null
+  const agotado = stockSel !== null && stockSel <= 0
+  const maxQty = stockSel === null ? 99 : Math.max(stockSel, 1)
+
   // Price
   const precio: number = selectedVariant
     ? selectedVariant.precio
@@ -97,6 +102,9 @@ export function ProductViewer({
   function selectVariant(idx: number) {
     setSliderMode(false)
     setVariantIdx(idx)
+    // La cantidad no puede superar el stock del formato recién elegido
+    const s = sorted[idx]?.stock
+    if (s != null) setCantidad(c => Math.max(1, Math.min(c, Math.max(s, 1))))
     const img = sorted[idx]?.imagen_url
     if (img) setActiveImageUrl(img)
   }
@@ -109,6 +117,7 @@ export function ProductViewer({
   }
 
   function handleAdd() {
+    if (agotado) return
     for (let i = 0; i < cantidad; i++) {
       addItem({ slug, familia, aplicacion, formato, precio, imagen: mainImage })
     }
@@ -117,6 +126,7 @@ export function ProductViewer({
   }
 
   function handleBuyNow() {
+    if (agotado) return
     for (let i = 0; i < cantidad; i++) {
       addItem({ slug, familia, aplicacion, formato, precio, imagen: mainImage })
     }
@@ -319,11 +329,12 @@ export function ProductViewer({
                     border: `1.5px solid ${variantIdx === i ? 'var(--blue)' : 'var(--line)'}`,
                     color: variantIdx === i ? '#fff' : 'var(--ink)',
                     boxShadow: variantIdx === i ? '0 4px 12px rgba(30,146,216,0.25)' : 'none',
+                    opacity: v.stock <= 0 ? 0.55 : 1,
                   }}
                 >
                   {v.formato}
                   <span className="block text-[11px] font-normal mt-[3px]" style={{ opacity: 0.85 }}>
-                    {v.precio.toFixed(2).replace('.', ',')} €
+                    {v.stock <= 0 ? 'Agotado' : `${v.precio.toFixed(2).replace('.', ',')} €`}
                   </span>
                 </button>
               ))}
@@ -398,7 +409,7 @@ export function ProductViewer({
               {cantidad}
             </span>
             <button
-              onClick={() => setCantidad(c => c + 1)}
+              onClick={() => setCantidad(c => Math.min(maxQty, c + 1))}
               aria-label="Aumentar cantidad"
               className="flex-1 flex items-center justify-center py-3.5 text-[var(--ink-700)] hover:bg-[var(--blue-soft)] hover:text-[var(--blue)] transition-colors"
             >
@@ -408,20 +419,21 @@ export function ProductViewer({
 
           <button
             onClick={handleAdd}
-            className="flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] transition-all"
+            disabled={agotado}
+            className="flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] transition-all disabled:cursor-not-allowed"
             style={{
-              background: added ? 'var(--success)' : 'var(--blue)',
+              background: agotado ? 'var(--ink-300)' : added ? 'var(--success)' : 'var(--blue)',
               padding: '16px 28px',
             }}
             onMouseEnter={e => {
-              if (!added) {
+              if (!added && !agotado) {
                 e.currentTarget.style.background = 'var(--blue-dark)'
                 e.currentTarget.style.transform = 'translateY(-1px)'
                 e.currentTarget.style.boxShadow = '0 8px 20px rgba(30,146,216,0.3)'
               }
             }}
             onMouseLeave={e => {
-              if (!added) {
+              if (!added && !agotado) {
                 e.currentTarget.style.background = 'var(--blue)'
                 e.currentTarget.style.transform = ''
                 e.currentTarget.style.boxShadow = ''
@@ -429,9 +441,22 @@ export function ProductViewer({
             }}
           >
             <ShoppingCart size={16} strokeWidth={2.2} />
-            {added ? '¡Añadido!' : 'Añadir a la cesta'}
+            {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir a la cesta'}
           </button>
         </div>
+
+        {/* Aviso de stock bajo / agotado del formato seleccionado */}
+        {stockSel !== null && stockSel > 0 && stockSel <= 3 && (
+          <p className="text-[13px] font-semibold mb-3" style={{ color: 'var(--warning)' }} role="status">
+            ¡Solo quedan {stockSel} {stockSel === 1 ? 'unidad' : 'unidades'} de este formato!
+          </p>
+        )}
+        {agotado && (
+          <p className="text-[13px] text-[var(--ink-500)] mb-3" role="status">
+            Este formato está agotado temporalmente. Elige otro formato o {' '}
+            <a href="/contacto" className="text-[var(--blue)] underline">consúltanos la disponibilidad</a>.
+          </p>
+        )}
 
         {/* ── Buy now */}
         <button
@@ -476,7 +501,7 @@ export function ProductViewer({
           style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}
         >
           {[
-            { Icon: Truck,     title: 'Envío gratis a Península', sub: `Entrega en ${settings.envio.entrega_estimada}` },
+            { Icon: Truck,     title: settings.envio.texto_peninsula, sub: `Entrega en ${settings.envio.entrega_estimada}` },
             { Icon: RotateCcw, title: 'Devolución 14 días',        sub: 'Reintegro íntegro' },
             { Icon: Award,     title: 'Producto propio',           sub: 'Fórmula registrada' },
             { Icon: PhoneCall, title: 'Te asesoramos',             sub: settings.contacto.telefono },
@@ -506,6 +531,28 @@ export function ProductViewer({
             </a>
           </div>
         )}
+
+        {/* ── Barra de compra sticky (solo móvil) */}
+        <div
+          className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white border-t border-[var(--line)] px-4 pt-2.5 flex items-center gap-3"
+          style={{ paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', boxShadow: '0 -6px 18px rgba(26,31,42,0.08)' }}
+        >
+          <div className="flex-1 min-w-0">
+            <div className="text-[11px] text-[var(--ink-500)] leading-tight truncate">{formato}</div>
+            <div className="text-[17px] font-bold text-[var(--ink)]">
+              {precio.toFixed(2).replace('.', ',')} €
+            </div>
+          </div>
+          <button
+            onClick={handleAdd}
+            disabled={agotado}
+            className="flex items-center justify-center gap-2 text-white font-semibold text-[13px] uppercase tracking-[0.04em] rounded-[10px] px-5 py-3 disabled:cursor-not-allowed"
+            style={{ background: agotado ? 'var(--ink-300)' : added ? 'var(--success)' : 'var(--blue)' }}
+          >
+            <ShoppingCart size={15} strokeWidth={2.2} />
+            {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir'}
+          </button>
+        </div>
       </div>
     </div>
   )

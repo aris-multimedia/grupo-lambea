@@ -24,7 +24,7 @@ export default async function EditProductPage({
   const p = rows[0] as Record<string, unknown>;
 
   const variants = await sql`
-    SELECT id, formato, precio, imagen_url, orden
+    SELECT id, formato, precio, imagen_url, orden, stock, peso_gramos
     FROM product_variants
     WHERE product_id = ${Number(p.id)}
     ORDER BY orden, id
@@ -74,6 +74,8 @@ export default async function EditProductPage({
     precio: v.precio != null ? Number(v.precio) : null,
     imagen_url: v.imagen_url ? String(v.imagen_url) : null,
     orden: Number(v.orden ?? 0),
+    stock: v.stock != null ? Number(v.stock) : 0,
+    peso_gramos: v.peso_gramos != null ? Number(v.peso_gramos) : null,
   }));
 
   const galleryImages = (galleryRows as Record<string, unknown>[]).map((r) => ({
@@ -97,7 +99,6 @@ export default async function EditProductPage({
     <ProductEditForm
       product={{ ...product, ficha_tecnica_url: fichaUrl }}
       variants={variantList}
-      documents={documentList}
       galleryImages={galleryImages}
     />
   );

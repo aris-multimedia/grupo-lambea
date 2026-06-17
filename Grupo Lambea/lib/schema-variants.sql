@@ -8,6 +8,13 @@ CREATE TABLE IF NOT EXISTS product_variants (
   precio      DECIMAL(10,2) NOT NULL,
   imagen_url  TEXT,
   orden       INTEGER NOT NULL DEFAULT 0,
+  -- Stock por formato. Se descuenta al confirmarse el pago (lib/stock.ts) y se
+  -- restaura si el pedido se cancela/reembolsa. Anti-sobreventa en checkout.
+  stock       INT NOT NULL DEFAULT 10,
+  -- Peso del paquete en gramos, para la etiqueta de envío (GENEI). Hoy contiene
+  -- una ESTIMACIÓN derivada del formato (ml/g 1:1, L/kg ×1000, +8% +60 g);
+  -- sustituir por los pesos reales cuando los dé el cliente.
+  peso_gramos INT,
   UNIQUE(product_id, formato)
 );
 
@@ -16,9 +23,6 @@ CREATE TABLE IF NOT EXISTS product_variants (
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'gelcoatlam-fase-2-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 60.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133828.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 kg', 30.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133828.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -29,9 +33,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pasta-rosa-superbrillo-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1.3 Kg', 33.80, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210906_001-1.jpeg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1.3 Kg', 16.90, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210906_001-1.jpeg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -46,16 +47,10 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-diesel-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250 ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-INDUSTRIAL-250-ML.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 52.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-INDUSTRIAL-250-ML.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '0.25 Litros / 250 ml', 18.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-INDUSTRIAL-250-ML.jpg', 2)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-INDUSTRIAL-250-ML.jpg', 3)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
 END $$;
@@ -64,9 +59,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'gelcoatlam-fase-1-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 60.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210314.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 kg', 30.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210314.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -88,9 +80,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'proteclam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 62.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210132.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 31.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210132.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -110,9 +99,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'antideslilam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 400 ml', 45.00, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '0.4 Litros / 400 ml', 22.50, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -122,9 +108,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tekalam-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2 en formato 1 Litro', 33.60, 'https://grupolambea.com/wp-content/uploads/2024/05/¡Compra-3-productos-y-te-descontamos-1.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 354.90, 'https://grupolambea.com/wp-content/uploads/2021/09/TEKALAM-NAUTIC-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -142,9 +125,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pasta-verde-superbrillo-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1KG', 37.80, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210832.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1KG', 18.90, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210832.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -158,9 +138,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pasta-rosa-superbrillo-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1KG', 33.80, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210906_001.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1KG', 16.90, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210906_001.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -173,9 +150,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'plastilam-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 63.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210507.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250g', 10.50, 'https://grupolambea.com/wp-content/uploads/2021/09/4.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -193,9 +167,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'antideslilam-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 400 ml', 45.00, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '0.4 Litros / 400 ml', 22.50, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -205,9 +176,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tekalam-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 33.60, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133422.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 354.90, 'https://grupolambea.com/wp-content/uploads/2021/09/TEKALAM-25L-INDUSTRIAL-ult-1.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -224,9 +192,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'proteclam-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 62.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210132.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 31.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210132.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -247,9 +212,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'motorlam-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 36.30, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210221-1.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 385.68, 'https://grupolambea.com/wp-content/uploads/2021/09/MOTORLAM-INDUSTRIAL-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -265,9 +227,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pulimento-superbrillo-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 84.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211514_001.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '100g', 7.90, 'https://grupolambea.com/wp-content/uploads/2023/07/PULIMENTO-SUPERBRILLO-NAUTICO-125g-scaled.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -291,9 +250,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
     VALUES (pid, '1,3KG', 18.90, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210832.jpg', 0)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1,3KG', 37.80, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210832.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '0,5KG', 11.30, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210832.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -303,12 +259,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-diesel-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-NAUTICO-250-ML.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250 ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-NAUTICO-250-ML.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 52.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-NAUTICO-250-ML.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -322,9 +272,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tapilam-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2 en formato 1 Litro', 35.80, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211228-2.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 380.37, 'https://grupolambea.com/wp-content/uploads/2021/09/TAPILAM-NAUTICO-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -342,9 +289,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'manzalam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2 en 1 Litro', 36.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211106-1.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 382.00, 'https://grupolambea.com/wp-content/uploads/2021/09/MANZALAM-NAUTICO-25L-LAST-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -361,9 +305,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'motorlam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2 en formato 1 Litro', 36.30, 'https://grupolambea.com/wp-content/uploads/2021/09/MOTORLAN-N.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 385.68, 'https://grupolambea.com/wp-content/uploads/2021/09/MOTORLAM-NAUTICO-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -379,9 +320,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'desoxilam-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 39.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211016.webp', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 391.00, 'https://grupolambea.com/wp-content/uploads/2021/09/DESOXIDANTE-NAUTICO-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -408,9 +346,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'fosslam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2 en formato 1 Litro', 58.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211315.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 29.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211315.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -427,9 +362,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tapilam-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 35.80, 'https://grupolambea.com/wp-content/uploads/2021/09/31IoqSpL-e1689784663905.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 380.37, 'https://grupolambea.com/wp-content/uploads/2021/09/TAPILAM-INDUSTRIAL-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -445,9 +377,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'manzalam-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 36.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210205.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 382.00, 'https://grupolambea.com/wp-content/uploads/2021/09/MANZALAM-INDUSTRIAL-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -491,9 +420,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'plastilam-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 63.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133608.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250g', 10.50, 'https://grupolambea.com/wp-content/uploads/2023/07/PLASTILAM-INDUSTRIAL-250-g-scaled.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -509,9 +435,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pulimento-superbrillo-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 84.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133629.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250g', 14.00, 'https://grupolambea.com/wp-content/uploads/2021/09/Diseno-sin-titulo.png', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -532,9 +455,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'antideslilam-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 400 ml', 41.00, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '0.4 Litros / 400 ml', 20.50, 'https://grupolambea.com/wp-content/uploads/2021/09/31TV17qh64L.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -544,9 +464,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tekalam-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 33.60, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133422.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 308.95, 'https://grupolambea.com/wp-content/uploads/2021/09/TEKALAM-CARAVANING-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -563,9 +480,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'tapilam-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 35.80, 'https://grupolambea.com/wp-content/uploads/2023/07/tapilam-caravaning.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 380.37, 'https://grupolambea.com/wp-content/uploads/2021/09/TAPILAM-CARAVANING-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -599,9 +513,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'fibralam-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 35.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133555.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 371.87, 'https://grupolambea.com/wp-content/uploads/2021/09/FIBRALAM-25L-CARAVANING-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -617,9 +528,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'proteclam-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 62.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210132.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 569.95, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133943_001.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -640,9 +548,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'manzalam-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 36.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133531.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 382.00, 'https://grupolambea.com/wp-content/uploads/2021/09/MANZALAM-25L-CARAVANING-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -659,9 +564,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'motorlam-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 36.30, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133500.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 385.68, 'https://grupolambea.com/wp-content/uploads/2021/09/MOTORLAM-CARAVANING-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -677,9 +579,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'desoxilam-caravaning';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 39.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133259.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25L', 391.00, 'https://grupolambea.com/wp-content/uploads/2021/09/DESOXIDANTE-CARAVANING-25-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -706,9 +605,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'gelcoatlam-fase-1-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 60.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133828.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 kg', 30.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_133828.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -719,9 +615,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'decalam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 66.80, 'https://grupolambea.com/wp-content/uploads/2021/09/WhatsApp-Image-2018-07-27-at-17.54.36-1-2-e1689265918205.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 33.40, 'https://grupolambea.com/wp-content/uploads/2021/09/WhatsApp-Image-2018-07-27-at-17.54.36-1-2-e1689265918205.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
@@ -731,9 +624,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'pulimento-superbrillo-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 84.00, 'https://grupolambea.com/wp-content/uploads/2023/07/PULIMENTO-SUPERBRILLO-INDUSTRIAL-500g-scaled.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250g', 14.00, 'https://grupolambea.com/wp-content/uploads/2021/09/Diseno-sin-titulo-16.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -754,9 +644,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'plastilam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1Kg', 63.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211531.webp', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250g', 10.50, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211531.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -773,9 +660,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'fibralam-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3x2', 35.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_211157.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25 Litros', 371.87, 'https://grupolambea.com/wp-content/uploads/2021/09/FIBRALAM-NAUTICO-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -791,9 +675,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'desoxilam-industrial';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 39.00, 'https://grupolambea.com/wp-content/uploads/2021/09/71X25RzfZuL._AC_SL1500_-e1689784561850.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '25L', 391.00, 'https://grupolambea.com/wp-content/uploads/2021/09/DESOXIDANTE-INDUSTRIAL-25L-ult.jpg', 1)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -836,12 +717,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-diesel-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-250-ML-1.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250 ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-250-ML-1.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 52.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-DIESEL-250-ML-1.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -855,12 +730,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-gasolina-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-INDUSTRIAL-250-ML.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-INDUSTRIAL-250-ML.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '250ml', 18.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-INDUSTRIAL-250-ML.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -873,12 +742,6 @@ END $$;
 DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-gasolina-nautico';
   IF pid IS NOT NULL THEN
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-NAUTICO-250-ML.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250 ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-NAUTICO-250-ML.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 52.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-NAUTICO-250-ML.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
@@ -909,12 +772,6 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'inyeclam-gasolina-caravaning';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 1 Litro', 104.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-250-ML-1.jpg', 0)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, '3X2 en 250 ml', 36.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-250-ML-1.jpg', 1)
-    ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
-    INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
     VALUES (pid, '1 Litro', 52.00, 'https://grupolambea.com/wp-content/uploads/2023/07/INYECLAM-GASOLINA-250-ML-1.jpg', 2)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
@@ -923,4 +780,7 @@ DO $$ DECLARE pid INTEGER; BEGIN
   END IF;
 END $$;
 
--- Total: 189 variant rows for 50 products (12 WC products skipped - discontinued)
+-- Variant rows for 50 products (12 WC products skipped - discontinued).
+-- Los packs "3X2 en ..." del WooCommerce antiguo se eliminaron del seed: la promo
+-- 3×2 ahora es automática (lib/cart.ts + cupón Stripe) y re-sembrarlos causaría
+-- doble descuento.

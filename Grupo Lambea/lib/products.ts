@@ -1,4 +1,4 @@
-import { cacheLife } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { sql } from './db';
 
 export interface Product {
@@ -150,13 +150,17 @@ export interface ProductVariant {
   precio: number;
   imagen_url: string | null;
   orden: number;
+  stock: number;
 }
 
 export async function getProductVariants(productId: number): Promise<ProductVariant[]> {
   'use cache';
   cacheLife('hours');
+  // Invalidada al vender/cancelar (lib/stock.ts) y al guardar desde el admin,
+  // para que el stock mostrado en la ficha no se quede horas desfasado.
+  cacheTag('variants', `variants-${productId}`);
   const rows = await sql`
-    SELECT id, formato, precio, imagen_url, orden
+    SELECT id, formato, precio, imagen_url, orden, stock
     FROM product_variants
     WHERE product_id = ${productId}
     ORDER BY orden
@@ -167,6 +171,7 @@ export async function getProductVariants(productId: number): Promise<ProductVari
     precio: Number(r.precio),
     imagen_url: safeImage(r.imagen_url),
     orden: Number(r.orden),
+    stock: r.stock != null ? Number(r.stock) : 0,
   }));
 }
 

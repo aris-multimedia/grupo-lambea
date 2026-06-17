@@ -4,6 +4,7 @@ import { CartProvider } from '@/components/CartProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CookieBanner } from '@/components/CookieBanner';
+import { WhatsAppFab } from '@/components/WhatsAppFab';
 import { getSettings } from '@/lib/settings';
 import { phoneDigits } from '@/lib/settings-schema';
 
@@ -58,11 +59,30 @@ export default async function SiteLayout({
     },
   };
 
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Grupo Lambea',
+    url: SITE_URL,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/buscar?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
       <Suspense fallback={null}>
         <CartProvider promo={settings.promo}>
@@ -76,6 +96,7 @@ export default async function SiteLayout({
           <main id="contenido">{children}</main>
           <SiteFooter settings={settings} />
           <CookieBanner />
+          <WhatsAppFab numero={settings.contacto.whatsapp} />
         </CartProvider>
       </Suspense>
     </>

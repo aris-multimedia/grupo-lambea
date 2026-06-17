@@ -112,6 +112,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "grupolambea.com", pathname: "/**" },
+      // Imágenes subidas desde el admin (media library, Vercel Blob)
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com", pathname: "/**" },
     ],
   },
   async redirects() {

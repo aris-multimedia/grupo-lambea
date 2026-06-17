@@ -42,11 +42,16 @@ export function CategoryPageLayout({ config, products }: Props) {
             No hay productos en esta categoría.
           </div>
         ) : (
+          <>
+          <p className="mb-5 text-[13px] text-[var(--ink-500)]">
+            {products.length} {products.length === 1 ? 'producto' : 'productos'} en {label}
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {products.map((p, i) => (
               <ProductCard key={p.slug} product={p} priority={i < 4} />
             ))}
           </div>
+          </>
         )}
       </div>
 

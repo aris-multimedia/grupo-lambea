@@ -94,7 +94,9 @@ CREATE TABLE IF NOT EXISTS orders (
   enviado_at          TIMESTAMPTZ,
   entregado_at        TIMESTAMPTZ,
   stripe_payment_intent TEXT,             -- enlaza reembolsos de Stripe con el pedido
+  stock_restaurado    BOOLEAN NOT NULL DEFAULT false, -- garantiza restauración de stock única al cancelar/reembolsar
   genei_shipment_id TEXT,
+  tracking_url      TEXT,                 -- enlace de seguimiento (lo rellenará GENEI); va en el email de "enviado"
   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

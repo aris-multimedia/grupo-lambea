@@ -40,17 +40,13 @@ interface Variant {
   precio: number | null;
   imagen_url: string | null;
   orden: number;
+  stock: number;
+  peso_gramos: number | null;
 }
 
 interface GalleryImage {
   url: string;
   alt: string;
-}
-
-interface Document {
-  tipo: string;
-  idioma: string;
-  url: string;
 }
 
 const APLICACIONES = [
@@ -62,12 +58,10 @@ const APLICACIONES = [
 export function ProductEditForm({
   product,
   variants: initialVariants,
-  documents,
   galleryImages: initialGallery,
 }: {
   product: ProductData;
   variants: Variant[];
-  documents: Document[];
   galleryImages: GalleryImage[];
 }) {
   const action = updateProduct.bind(null, product.slug);
@@ -94,7 +88,7 @@ export function ProductEditForm({
   function addVariant() {
     setVariants((prev) => [
       ...prev,
-      { id: null, formato: '', precio: null, imagen_url: null, orden: prev.length },
+      { id: null, formato: '', precio: null, imagen_url: null, orden: prev.length, stock: 10, peso_gramos: null },
     ]);
   }
 
@@ -295,6 +289,8 @@ export function ProductEditForm({
             <Section icon={<Layers size={14} />} title="Variantes y precios">
               <p className="text-[12px] text-[#9ca3af] mb-3">
                 Un formato por variante. El orden determina cómo aparecen en la tienda.
+                Stock 0 = «Agotado» en la ficha; el peso (g) es para la etiqueta de envío
+                (vacío = se estima del formato al guardar).
               </p>
 
               {variants.length === 0 ? (
@@ -532,8 +528,8 @@ function VariantRow({
 }) {
   return (
     <div className="border-b border-[#f3f4f6] last:border-0">
-      {/* Main row: order, format, price, delete */}
-      <div className="grid grid-cols-[20px_16px_1fr_110px_32px] gap-3 items-center px-4 pt-2.5 pb-1.5">
+      {/* Main row: order, format, price, stock, delete */}
+      <div className="grid grid-cols-[20px_16px_1fr_100px_84px_32px] gap-3 items-center px-4 pt-2.5 pb-1.5">
         <span className="text-[12px] text-[#c4c9d4] text-center">{idx + 1}</span>
         <div className="flex flex-col gap-0.5">
           <button
@@ -575,6 +571,24 @@ function VariantRow({
           />
           <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-[#9ca3af]">€</span>
         </div>
+        <div className="relative">
+          <input
+            type="text"
+            inputMode="numeric"
+            value={variant.stock}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/\D/g, '');
+              onChange(idx, 'stock', raw === '' ? 0 : Math.min(Number(raw), 99999));
+            }}
+            className={`w-full border rounded-md px-2.5 py-1.5 text-[13px] text-right outline-none focus:border-[#1E92D8] transition-colors pr-9 bg-white ${
+              variant.stock <= 0 ? 'border-red-300 text-red-600' : 'border-[#e5e7eb]'
+            }`}
+            placeholder="0"
+            aria-label="Stock disponible"
+            title="Unidades en stock de este formato (0 = agotado en la tienda)"
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-[#9ca3af]">uds</span>
+        </div>
         <button
           type="button"
           onClick={() => onRemove(idx)}
@@ -605,6 +619,22 @@ function VariantRow({
           className="flex-1 border border-[#e5e7eb] rounded-md px-2.5 py-1 text-[12px] text-[#6b7280] outline-none focus:border-[#1E92D8] transition-colors bg-white"
           placeholder="URL imagen de esta variante (opcional)"
         />
+        <div className="relative w-[110px] shrink-0">
+          <input
+            type="text"
+            inputMode="numeric"
+            value={variant.peso_gramos ?? ''}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/\D/g, '');
+              onChange(idx, 'peso_gramos', raw === '' ? null : Number(raw));
+            }}
+            className="w-full border border-[#e5e7eb] rounded-md px-2.5 py-1 text-[12px] text-right text-[#6b7280] outline-none focus:border-[#1E92D8] transition-colors bg-white pr-6"
+            placeholder="auto"
+            aria-label="Peso del paquete en gramos"
+            title="Peso del paquete en gramos para la etiqueta de envío. Vacío = se estima del formato al guardar."
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-[#9ca3af]">g</span>
+        </div>
       </div>
     </div>
   );

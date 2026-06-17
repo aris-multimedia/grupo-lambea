@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe'
 import { getSettings } from '@/lib/settings'
 import { promoDiscount } from '@/lib/promotions'
 import { sendOrderConfirmationEmail } from '@/lib/email'
+import { decrementStockForItems, restoreStockForOrder } from '@/lib/stock'
 import type { CartItem } from '@/types/product'
 
 export type PricedItem = {
@@ -14,6 +15,8 @@ export type PricedItem = {
   precio: number
   nombre: string
   productId: number
+  /** Stock disponible de la variante; null = producto sin control de stock. */
+  stock: number | null
 }
 
 export type PendingPayload = {
@@ -51,7 +54,7 @@ export async function priceCart(
     `
     if (!product) continue
     const [variant] = await sql`
-      SELECT precio FROM product_variants WHERE product_id = ${product.id} AND formato = ${it.formato} LIMIT 1
+      SELECT precio, stock FROM product_variants WHERE product_id = ${product.id} AND formato = ${it.formato} LIMIT 1
     `
     const precio = variant ? Number(variant.precio) : Number(product.precio_desde ?? 0)
     if (!(precio > 0)) continue
@@ -63,6 +66,7 @@ export async function priceCart(
       precio,
       nombre: String(product.nombre ?? product.familia),
       productId: Number(product.id),
+      stock: variant ? Number(variant.stock ?? 0) : null,
     })
   }
   if (items.length === 0) return null
@@ -110,6 +114,8 @@ export async function convertPendingToOrder(
       `
     }
     await sql`UPDATE pending_checkouts SET order_id = ${order.id} WHERE id = ${pendingId}`
+    // Descontar stock de lo vendido (solo aquí: con el pago ya confirmado).
+    await decrementStockForItems(p.items).catch(() => {})
     // Email de confirmación al cliente (no-op si Resend no está configurado).
     await sendOrderConfirmationEmail({ numero: p.numeroPedido, nombre: p.nombre, email: p.email, total: Number(p.total) })
   } catch {
@@ -141,5 +147,9 @@ export async function confirmOrderBySession(
 
 /** Marca un pedido como reembolsado a partir del payment_intent de Stripe (webhook). */
 export async function markRefundedByPaymentIntent(paymentIntentId: string): Promise<void> {
-  await sql`UPDATE orders SET estado = 'reembolsado' WHERE stripe_payment_intent = ${paymentIntentId} AND estado <> 'reembolsado'`
+  const [o] = await sql`SELECT id FROM orders WHERE stripe_payment_intent = ${paymentIntentId} LIMIT 1`
+  if (!o) return
+  await sql`UPDATE orders SET estado = 'reembolsado' WHERE id = ${o.id} AND estado <> 'reembolsado'`
+  // El género vuelve al almacén → restaurar stock (idempotente).
+  await restoreStockForOrder(Number(o.id)).catch(() => {})
 }

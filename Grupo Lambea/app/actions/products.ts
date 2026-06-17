@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { sql } from '@/lib/db';
+import { estimateWeightFromFormato } from '@/lib/shipping';
 
 interface VariantPayload {
   id: number | null;
@@ -9,6 +10,10 @@ interface VariantPayload {
   precio: number | null;
   imagen_url: string | null;
   orden: number;
+  /** Unidades disponibles del formato (anti-sobreventa en checkout). */
+  stock: number | null;
+  /** Peso del paquete en gramos (GENEI). Vacío → se estima del formato. */
+  peso_gramos: number | null;
 }
 
 interface GalleryPayload {
@@ -154,19 +159,25 @@ async function updateProductInner(slug: string, formData: FormData) {
   for (const v of variants) {
     if (!v.formato?.trim()) continue;            // ignora filas de variante vacías
     const precio = Number.isFinite(v.precio as number) ? (v.precio as number) : 0; // columna NOT NULL
+    const stock = Number.isFinite(v.stock as number) ? Math.max(0, Math.round(v.stock as number)) : 0; // columna NOT NULL
+    const peso = Number.isFinite(v.peso_gramos as number) && (v.peso_gramos as number) > 0
+      ? Math.round(v.peso_gramos as number)
+      : estimateWeightFromFormato(v.formato); // vacío → estimación desde el formato ("500 ml" → g)
     if (v.id != null) {
       await sql`
         UPDATE product_variants SET
-          formato    = ${v.formato},
-          precio     = ${precio},
-          imagen_url = ${v.imagen_url ?? null},
-          orden      = ${v.orden}
+          formato     = ${v.formato},
+          precio      = ${precio},
+          imagen_url  = ${v.imagen_url ?? null},
+          orden       = ${v.orden},
+          stock       = ${stock},
+          peso_gramos = ${peso}
         WHERE id = ${v.id} AND product_id = ${productId}
       `;
     } else {
       await sql`
-        INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-        VALUES (${productId}, ${v.formato}, ${precio}, ${v.imagen_url ?? null}, ${v.orden})
+        INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden, stock, peso_gramos)
+        VALUES (${productId}, ${v.formato}, ${precio}, ${v.imagen_url ?? null}, ${v.orden}, ${stock}, ${peso})
       `;
     }
   }
@@ -185,4 +196,7 @@ async function updateProductInner(slug: string, formData: FormData) {
   revalidatePath('/admin/productos');
   revalidatePath(`/admin/productos/${slug}`);
   revalidatePath(`/tienda/${slug}`);
+  // La ficha pública lee variantes vía getProductVariants ('use cache') →
+  // invalidar su tag para que precio/stock editados se vean al instante.
+  updateTag(`variants-${productId}`);
 }
