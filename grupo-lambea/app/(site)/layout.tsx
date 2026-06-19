@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { CartProvider } from '@/components/CartProvider';
+import { IntlProvider } from '@/components/IntlProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CookieBanner } from '@/components/CookieBanner';
@@ -86,17 +87,19 @@ export default async function SiteLayout({
       />
       <Suspense fallback={null}>
         <CartProvider promo={settings.promo}>
-          <a
-            href="#contenido"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-(--blue) focus:text-white focus:px-4 focus:py-2 focus:rounded-(--r-sm) focus:font-semibold focus:no-underline"
-          >
-            Saltar al contenido
-          </a>
-          <SiteHeader settings={settings} />
-          <main id="contenido">{children}</main>
-          <SiteFooter settings={settings} />
-          <CookieBanner />
-          <WhatsAppFab numero={settings.contacto.whatsapp} />
+          <IntlProvider>
+            <a
+              href="#contenido"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-(--blue) focus:text-white focus:px-4 focus:py-2 focus:rounded-(--r-sm) focus:font-semibold focus:no-underline"
+            >
+              Saltar al contenido
+            </a>
+            <SiteHeader settings={settings} />
+            <main id="contenido">{children}</main>
+            <SiteFooter settings={settings} />
+            <CookieBanner />
+            <WhatsAppFab numero={settings.contacto.whatsapp} />
+          </IntlProvider>
         </CartProvider>
       </Suspense>
     </>

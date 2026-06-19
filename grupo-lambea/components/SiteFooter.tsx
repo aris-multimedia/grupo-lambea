@@ -1,27 +1,29 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Phone, Mail, MapPin } from 'lucide-react'
 import { phoneDigits, type SiteSettings } from '@/lib/settings-schema'
 import { NewsletterForm } from './NewsletterForm'
 
+// [claveTraducción, href] — la etiqueta se traduce en render.
 const NAV_TIENDA = [
-  ['Náutico', '/tienda/nautico'],
-  ['Caravaning', '/tienda/caravaning'],
-  ['Industrial', '/tienda/industrial'],
+  ['nautica', '/tienda/nautico'],
+  ['caravaning', '/tienda/caravaning'],
+  ['industrial', '/tienda/industrial'],
 ] as const
 
 const NAV_EMPRESA = [
-  ['Quiénes somos', '/nosotros'],
-  ['Distribuidores', '/'],
-  ['Contacto', '/contacto'],
+  ['quienesSomos', '/nosotros'],
+  ['distribuidores', '/'],
+  ['contacto', '/contacto'],
 ] as const
 
 const NAV_AYUDA = [
-  ['Condiciones de contratación', '/condiciones-contratacion'],
-  ['Política de privacidad', '/politica-privacidad'],
-  ['Aviso legal', '/aviso-legal'],
-  ['Cookies', '/cookies'],
+  ['condiciones', '/condiciones-contratacion'],
+  ['privacidad', '/politica-privacidad'],
+  ['avisoLegal', '/aviso-legal'],
+  ['cookies', '/cookies'],
 ] as const
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
@@ -39,6 +41,9 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 }
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
+  const t = useTranslations('footer')
+  const tc = useTranslations('cats')
+
   return (
     <footer className="text-white" style={{ background: '#0E5784' }}>
 
@@ -50,10 +55,10 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
               className="block text-white text-[17px] mb-1 font-(family-name:--font-lora)"
               style={{ fontWeight: 500 }}
             >
-              Novedades y ofertas exclusivas
+              {t('newsletterTitulo')}
             </strong>
             <span className="text-[15px]" style={{ color: '#C8E8F8' }}>
-              Accede antes que nadie a nuevas fórmulas y promociones de temporada.
+              {t('newsletterTexto')}
             </span>
           </div>
           <NewsletterForm />
@@ -68,11 +73,10 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             Grupo Lambea
           </div>
           <div className="text-[13px] mb-5" style={{ color: '#90C8E8' }}>
-            Empresa familiar · Desde {settings.empresa.anio_fundacion}
+            {t('familiarDesde')} {settings.empresa.anio_fundacion}
           </div>
           <p className="text-[15px] leading-relaxed mb-6" style={{ color: '#C8E8F8' }}>
-            Formulamos productos profesionales de limpieza y mantenimiento para náutica,
-            caravaning e industrial. Tres generaciones con el mismo oficio desde Tarragona.
+            {t('marcaDesc')}
           </p>
 
           <div className="flex flex-col gap-3.5">
@@ -102,17 +106,17 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
           </div>
 
           <p className="text-[13px] mt-5" style={{ color: '#90C8E8' }}>
-            Reg. toxicológico {settings.empresa.registro_toxicologico} · Fabricado en España
+            {t('regTox')} {settings.empresa.registro_toxicologico} · {t('fabricadoEspana')}
           </p>
         </div>
 
         {/* Tienda */}
         <div>
           <h4 className="text-[12px] uppercase tracking-[0.18em] font-bold mb-4" style={{ color: '#90C8E8' }}>
-            Tienda
+            {t('tienda')}
           </h4>
-          {NAV_TIENDA.map(([label, href]) => (
-            <FooterLink key={label} href={href}>{label}</FooterLink>
+          {NAV_TIENDA.map(([key, href]) => (
+            <FooterLink key={href} href={href}>{tc(key)}</FooterLink>
           ))}
           {settings.promo.activa && settings.promo.titulo && (
             <FooterLink href="/tienda/nautico">{settings.promo.titulo}</FooterLink>
@@ -122,20 +126,20 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         {/* Empresa */}
         <div>
           <h4 className="text-[12px] uppercase tracking-[0.18em] font-bold mb-4" style={{ color: '#90C8E8' }}>
-            Empresa
+            {t('empresa')}
           </h4>
-          {NAV_EMPRESA.map(([label, href]) => (
-            <FooterLink key={label} href={href}>{label}</FooterLink>
+          {NAV_EMPRESA.map(([key, href]) => (
+            <FooterLink key={key} href={href}>{t(key)}</FooterLink>
           ))}
         </div>
 
         {/* Ayuda */}
         <div>
           <h4 className="text-[12px] uppercase tracking-[0.18em] font-bold mb-4" style={{ color: '#90C8E8' }}>
-            Ayuda
+            {t('ayuda')}
           </h4>
-          {NAV_AYUDA.map(([label, href]) => (
-            <FooterLink key={label} href={href}>{label}</FooterLink>
+          {NAV_AYUDA.map(([key, href]) => (
+            <FooterLink key={key} href={href}>{t(key)}</FooterLink>
           ))}
         </div>
       </div>
@@ -144,12 +148,12 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       <div style={{ borderTop: '1px solid #1C6FA0' }}>
         <div className="max-w-[1320px] mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 text-center md:text-left">
           <span className="text-[13px]" style={{ color: '#90C8E8' }}>
-            © {new Date().getFullYear()} {settings.empresa.razon_social}{settings.empresa.cif ? ` · CIF ${settings.empresa.cif}` : ''} · Todos los derechos reservados.
+            © {new Date().getFullYear()} {settings.empresa.razon_social}{settings.empresa.cif ? ` · CIF ${settings.empresa.cif}` : ''} · {t('derechos')}
           </span>
 
           {/* Urgencias — discreta, en el bottom bar */}
           <span className="text-[12px]" style={{ color: '#7BBCD8' }}>
-            Urgencias toxicológicas:{' '}
+            {t('urgencias')}{' '}
             <a
               href={`tel:+${phoneDigits(settings.contacto.telefono_toxicologia)}`}
               className="font-semibold no-underline transition-colors"
@@ -159,11 +163,11 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             >
               {settings.contacto.telefono_toxicologia}
             </a>
-            {' '}· 24 h
+            {' '}· {t('h24')}
           </span>
 
           <span className="text-[13px]" style={{ color: '#90C8E8' }}>
-            Desarrollado por{' '}
+            {t('desarrollado')}{' '}
             <a
               href="https://arismultimedia.com"
               target="_blank"

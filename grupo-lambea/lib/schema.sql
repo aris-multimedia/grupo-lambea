@@ -149,3 +149,33 @@ CREATE TABLE IF NOT EXISTS pending_checkouts (
   order_id    INTEGER,                         -- se rellena al convertir en pedido
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ── COUPONS (cheques regalo de un solo uso, post-compra) ─────────────────────
+-- Se genera uno tras CADA pedido pagado y se envía por email al cliente. El
+-- canje se valida en Stripe (Promotion Code con max_redemptions = 1 + caducidad);
+-- esta tabla es el registro/auditoría local. Ver lib/coupons.ts.
+CREATE TABLE IF NOT EXISTS coupons (
+  id                        SERIAL PRIMARY KEY,
+  codigo                    TEXT UNIQUE NOT NULL,
+  descuento_pct             INTEGER NOT NULL DEFAULT 10,
+  estado                    TEXT NOT NULL DEFAULT 'activo',  -- activo | usado | caducado
+  order_id                  INTEGER REFERENCES orders(id) ON DELETE SET NULL,  -- pedido que lo generó
+  email                     TEXT,                            -- cliente al que se envió
+  stripe_coupon_id          TEXT,
+  stripe_promotion_code_id  TEXT,
+  max_usos                  INTEGER NOT NULL DEFAULT 1,
+  usos                      INTEGER NOT NULL DEFAULT 0,
+  expira_at                 TIMESTAMPTZ,
+  created_at                TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── PAGE SEO (título/descripción SEO de páginas estáticas) ───────────────────
+-- Las fichas de producto guardan su SEO en products.seo_title/seo_description;
+-- esta tabla cubre las páginas (home, categorías, nosotros, contacto…). Se
+-- gestiona desde /admin/seo y la consume getPageSeo() (lib/seo.ts).
+CREATE TABLE IF NOT EXISTS page_seo (
+  key         TEXT PRIMARY KEY,   -- 'home' | 'nautico' | 'contacto' | …
+  title       TEXT,
+  description TEXT,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);

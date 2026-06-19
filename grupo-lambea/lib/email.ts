@@ -2,6 +2,27 @@ import 'server-only'
 
 type OrderEmailData = { numero: string; nombre: string; email: string; total: number }
 type ShippedEmailData = { numero: string; nombre: string; email: string; trackingUrl?: string | null }
+type AdminOrderData = {
+  numero: string
+  nombre: string
+  email: string
+  telefono: string | null
+  total: number
+  direccion: string
+  ciudad: string
+  cp: string
+  items: { nombre: string; formato: string; cantidad: number; precio: number }[]
+}
+type GiftCouponData = { nombre: string; email: string; codigo: string; pct: number; expira: string | null }
+
+/** Escapa valores libres del cliente (nombre, dirección…) antes de meterlos en el HTML. */
+function esc(s: string): string {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
 
 /** POST a la API de Resend; null si Resend no está configurado. Nunca lanza. */
 async function sendViaResend(payload: Record<string, unknown>): Promise<void> {
@@ -53,6 +74,68 @@ export async function sendOrderShippedEmail(o: ShippedEmailData): Promise<void> 
       <p>Acabamos de entregar tu pedido <strong>${o.numero}</strong> a la agencia de transporte.</p>
       ${o.trackingUrl ? `<p><a href="${o.trackingUrl}" style="color:#1E92D8">Seguir el envío en tiempo real →</a></p>` : ''}
       <p>Si tienes cualquier duda, responde a este email.</p>
+      <p style="color:#6B7480">— Grupo Lambea</p>
+    </div>`,
+  })
+}
+
+/**
+ * Aviso de NUEVO PEDIDO al dueño/empresa, para gestionarlo con inmediatez.
+ * Se envía a ORDER_NOTIFY_EMAIL (o, en su defecto, CONTACT_TO_EMAIL). No-op si
+ * no hay destinatario configurado. Nunca lanza.
+ *
+ * NOTA: el cliente pidió además un "aviso telefónico" (SMS/WhatsApp). Eso
+ * requiere una cuenta de proveedor (Twilio/Meta) y queda pendiente; este email
+ * es el aviso inmediato que no necesita cuentas nuevas (reutiliza Resend).
+ */
+export async function sendNewOrderAdminEmail(o: AdminOrderData): Promise<void> {
+  const to = process.env.ORDER_NOTIFY_EMAIL || process.env.CONTACT_TO_EMAIL
+  if (!to) return
+  const total = o.total.toFixed(2).replace('.', ',')
+  const filas = o.items
+    .map(
+      (i) =>
+        `<tr><td style="padding:4px 8px;border-bottom:1px solid #eee">${i.cantidad}×</td>
+         <td style="padding:4px 8px;border-bottom:1px solid #eee">${esc(i.nombre)}${i.formato ? ' · ' + esc(i.formato) : ''}</td>
+         <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right">${(i.precio * i.cantidad).toFixed(2).replace('.', ',')} €</td></tr>`,
+    )
+    .join('')
+  await sendViaResend({
+    to,
+    subject: `🛒 Nuevo pedido ${o.numero} · ${total} € — Grupo Lambea`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:560px;color:#1A1F2A">
+      <h2 style="color:#0E5784">Nuevo pedido recibido</h2>
+      <p><strong>Pedido:</strong> ${esc(o.numero)}<br>
+      <strong>Total:</strong> ${total} €</p>
+      <h3 style="color:#0E5784;margin-bottom:4px">Cliente</h3>
+      <p>${esc(o.nombre)}<br>
+      ${esc(o.email)}${o.telefono ? ' · ' + esc(o.telefono) : ''}<br>
+      ${esc(o.direccion)}, ${esc(o.cp)} ${esc(o.ciudad)}</p>
+      <h3 style="color:#0E5784;margin-bottom:4px">Artículos</h3>
+      <table style="border-collapse:collapse;width:100%;font-size:14px">${filas}</table>
+      <p style="margin-top:16px"><a href="${process.env.NEXTAUTH_URL ?? ''}/admin/pedidos" style="color:#1E92D8">Abrir el panel de pedidos →</a></p>
+      <p style="color:#6B7480">— Grupo Lambea</p>
+    </div>`,
+  })
+}
+
+/**
+ * Cheque regalo (código de descuento) al cliente tras realizar un pedido.
+ * El código se genera y registra en lib/coupons.ts; aquí solo se notifica.
+ * No-op si no hay email. Nunca lanza.
+ */
+export async function sendGiftCouponEmail(o: GiftCouponData): Promise<void> {
+  if (!o.email) return
+  await sendViaResend({
+    to: o.email,
+    subject: `🎁 Tu cheque regalo del ${o.pct}% — Grupo Lambea`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:480px;color:#1A1F2A">
+      <h2 style="color:#0E5784">¡Gracias por tu compra, ${esc(o.nombre)}!</h2>
+      <p>Como agradecimiento, aquí tienes un <strong>${o.pct}% de descuento</strong> para tu próximo pedido:</p>
+      <p style="text-align:center;margin:24px 0">
+        <span style="display:inline-block;border:2px dashed #E8A93C;background:#fffbf0;color:#1A1F2A;font-size:22px;font-weight:bold;letter-spacing:2px;padding:14px 28px;border-radius:10px">${esc(o.codigo)}</span>
+      </p>
+      <p style="font-size:13px;color:#6B7480">Introduce este código en la cesta al pagar. Es de un solo uso${o.expira ? ` y válido hasta el ${o.expira}` : ''}.</p>
       <p style="color:#6B7480">— Grupo Lambea</p>
     </div>`,
   })

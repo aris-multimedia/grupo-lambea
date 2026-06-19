@@ -6,21 +6,17 @@ import {
   Factory, Microscope, Leaf, Globe2,
 } from 'lucide-react'
 import { PageHero } from '@/components/PageHero'
+import { getPageSeo } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Sobre Nosotros',
-  description:
-    'Más de 70 años fabricando productos de limpieza y mantenimiento profesional para náutica, caravaning e industria. Empresa familiar fundada en 1952.',
-  alternates: { canonical: '/nosotros' },
-  openGraph: {
-    type: 'website',
-    siteName: 'Grupo Lambea',
-    locale: 'es_ES',
-    url: '/nosotros',
-    title: 'Sobre Nosotros — Grupo Lambea',
-    description:
-      'Más de 70 años fabricando productos de limpieza y mantenimiento profesional para náutica, caravaning e industria. Empresa familiar fundada en 1952.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = await getPageSeo('nosotros')
+  const url = '/nosotros'
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', siteName: 'Grupo Lambea', locale: 'es_ES', url, title, description },
+  }
 }
 
 export default function NosotrosPage() {

@@ -70,7 +70,7 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'gelcoatlam-fase-2-nautico';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, 'Variante 1', 30.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210332-1.jpg', 0)
+    VALUES (pid, '1 kg', 30.00, 'https://grupolambea.com/wp-content/uploads/2021/09/20200202_210332-1.jpg', 0)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
 END $$;
@@ -394,7 +394,7 @@ DO $$ DECLARE pid INTEGER; BEGIN
   SELECT id INTO pid FROM products WHERE slug = 'decalam-industrial';
   IF pid IS NOT NULL THEN
     INSERT INTO product_variants (product_id, formato, precio, imagen_url, orden)
-    VALUES (pid, 'Variante 1', 33.40, 'https://grupolambea.com/wp-content/uploads/2021/09/71vIas0I7NL._AC_SL1500_-1-e1689265796364.jpg', 0)
+    VALUES (pid, '1 L', 33.40, 'https://grupolambea.com/wp-content/uploads/2021/09/71vIas0I7NL._AC_SL1500_-1-e1689265796364.jpg', 0)
     ON CONFLICT (product_id, formato) DO UPDATE SET precio = EXCLUDED.precio, imagen_url = EXCLUDED.imagen_url;
   END IF;
 END $$;

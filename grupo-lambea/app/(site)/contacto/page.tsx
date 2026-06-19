@@ -3,22 +3,18 @@ import { Phone, Mail, MapPin, Clock, AlertTriangle, MessageCircle } from 'lucide
 import { ContactForm } from './ContactForm'
 import { PageHero } from '@/components/PageHero'
 import { getSettings } from '@/lib/settings'
+import { getPageSeo } from '@/lib/seo'
 import { phoneDigits } from '@/lib/settings-schema'
 
-export const metadata: Metadata = {
-  title: 'Contacto',
-  description:
-    'Contacta con Grupo Lambea: formulario, WhatsApp, email o teléfono. Respondemos en menos de 24 horas. Asesoramiento directo sin intermediarios.',
-  alternates: { canonical: '/contacto' },
-  openGraph: {
-    type: 'website',
-    siteName: 'Grupo Lambea',
-    locale: 'es_ES',
-    url: '/contacto',
-    title: 'Contacto — Grupo Lambea',
-    description:
-      'Contacta con Grupo Lambea: formulario, WhatsApp, email o teléfono. Respondemos en menos de 24 horas.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = await getPageSeo('contacto')
+  const url = '/contacto'
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', siteName: 'Grupo Lambea', locale: 'es_ES', url, title, description },
+  }
 }
 
 export default async function ContactoPage() {

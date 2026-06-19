@@ -3,7 +3,8 @@ import { sql } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 import { getSettings } from '@/lib/settings'
 import { promoDiscount } from '@/lib/promotions'
-import { sendOrderConfirmationEmail } from '@/lib/email'
+import { sendOrderConfirmationEmail, sendNewOrderAdminEmail, sendGiftCouponEmail } from '@/lib/email'
+import { issuePostOrderCoupon } from '@/lib/coupons'
 import { decrementStockForItems, restoreStockForOrder } from '@/lib/stock'
 import type { CartItem } from '@/types/product'
 
@@ -114,10 +115,28 @@ export async function convertPendingToOrder(
       `
     }
     await sql`UPDATE pending_checkouts SET order_id = ${order.id} WHERE id = ${pendingId}`
+    // IMPORTANTE: todos los efectos secundarios (stock, emails, cheque regalo)
+    // van DENTRO de este try, después del INSERT. Eso garantiza que se ejecutan
+    // EXACTAMENTE UNA VEZ por pedido: una segunda llamada concurrente (página +
+    // webhook) falla en el INSERT por `numero_pedido` UNIQUE y salta al catch
+    // sin duplicar cupón ni avisos. No sacar esto fuera del try.
     // Descontar stock de lo vendido (solo aquí: con el pago ya confirmado).
     await decrementStockForItems(p.items).catch(() => {})
     // Email de confirmación al cliente (no-op si Resend no está configurado).
     await sendOrderConfirmationEmail({ numero: p.numeroPedido, nombre: p.nombre, email: p.email, total: Number(p.total) })
+    // Aviso de nuevo pedido al dueño/empresa (gestión inmediata).
+    await sendNewOrderAdminEmail({
+      numero: p.numeroPedido, nombre: p.nombre, email: p.email, telefono: p.telefono,
+      total: Number(p.total), direccion: p.direccion, ciudad: p.ciudad, cp: p.cp,
+      items: p.items.map((i) => ({ nombre: i.nombre, formato: i.formato, cantidad: i.cantidad, precio: i.precio })),
+    }).catch(() => {})
+    // Cheque regalo de un solo uso para el cliente (best-effort: no-op sin Stripe/tabla).
+    const gift = await issuePostOrderCoupon({ orderId: Number(order.id), email: p.email }).catch(() => null)
+    if (gift) {
+      await sendGiftCouponEmail({
+        nombre: p.nombre, email: p.email, codigo: gift.codigo, pct: gift.pct, expira: gift.expira,
+      }).catch(() => {})
+    }
   } catch {
     // Carrera (otra confirmación ya lo creó; numero_pedido es UNIQUE) → no pasa nada.
   }

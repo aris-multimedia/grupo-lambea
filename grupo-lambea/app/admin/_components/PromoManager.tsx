@@ -32,7 +32,7 @@ export function PromoManager({ initial }: { initial: ActivePromo }) {
     setTipo(next);
     setTitulo(p.tituloDefault);
     setDescripcion(p.descripcionDefault);
-    setValor(p.valor?.placeholder && next === 'descuento' ? '10' : '');
+    setValor(next === 'descuento' || next === 'combinada' ? '10' : '');
   }
 
   function save() {

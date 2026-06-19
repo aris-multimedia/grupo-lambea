@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+// i18n: el locale se lee de la cookie NEXT_LOCALE en i18n/request.ts.
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 // 301 redirects: old WooCommerce product URLs → new Next.js routes
 // Preserves SEO link equity built on grupolambea.com/producto/...
@@ -128,4 +132,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

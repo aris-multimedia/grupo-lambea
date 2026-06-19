@@ -1,11 +1,24 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Anchor, ArrowRight, Phone, Truck, FlaskConical, Headphones, ShieldCheck, PhoneCall, RotateCcw, Star } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { getFeatured, getTopReviews, getReviewStats } from '@/lib/products'
 import { getSettings } from '@/lib/settings'
+import { getPageSeo } from '@/lib/seo'
 import { phoneDigits } from '@/lib/settings-schema'
 import { ProductCard } from '@/components/ProductCard'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = await getPageSeo('home')
+  return {
+    title,
+    description,
+    alternates: { canonical: '/' },
+    openGraph: { type: 'website', siteName: 'Grupo Lambea', locale: 'es_ES', url: '/', title, description },
+  }
+}
 
 export default async function HomePage() {
   const featured = (await getFeatured()).slice(0, 4)
@@ -15,6 +28,9 @@ export default async function HomePage() {
   const promoMark = promo.tipo === 'descuento' ? `−${promoPct}%` : '3×2'
   const topReviews = await getTopReviews(3)
   const reviewStats = await getReviewStats()
+  const t = await getTranslations('home')
+  const tc = await getTranslations('common')
+  const tcat = await getTranslations('cats')
   const hero = featured[0]
   const aplLabelMap: Record<string, string> = { nautico: 'Náutica', caravaning: 'Caravaning', industrial: 'Industrial' }
   const heroApl = hero ? (aplLabelMap[hero.aplicaciones[0]] ?? hero.aplicaciones[0]) : 'Náutica'
@@ -22,7 +38,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-[580px] overflow-hidden flex items-center bg-[var(--blue-deep)]">
+      <section className="relative min-h-[460px] md:min-h-[580px] overflow-hidden flex items-center bg-[var(--blue-deep)]">
         {/* BG image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -69,7 +85,7 @@ export default async function HomePage() {
             <div className="flex items-center gap-2.5 mb-5">
               <Anchor size={13} className="text-[#B3DEF2]" strokeWidth={1.8} />
               <span className="text-[12px] uppercase tracking-[0.22em] font-semibold text-[#B3DEF2]">
-                Empresa familiar · Desde {empresa.anio_fundacion}
+                {t('heroEyebrow')} {empresa.anio_fundacion}
               </span>
             </div>
 
@@ -77,13 +93,12 @@ export default async function HomePage() {
               className="font-(family-name:--font-lora) font-medium text-white mb-[22px]"
               style={{ fontSize: 'clamp(38px, 5vw, 60px)', lineHeight: 1.1, letterSpacing: '-0.025em' }}
             >
-              Productos profesionales para tu barco, vehículo{' '}
-              <em style={{ fontStyle: 'italic', color: '#B3DEF2', fontWeight: 400 }}>o taller.</em>
+              {t('heroH1')}{' '}
+              <em style={{ fontStyle: 'italic', color: '#B3DEF2', fontWeight: 400 }}>{t('heroH1Em')}</em>
             </h1>
 
             <p className="text-[17px] leading-[1.65] text-white/88 max-w-[560px] mb-8">
-              Llevamos tres generaciones formulando productos de limpieza, mantenimiento y pulido para los
-              astilleros, talleres y profesionales más exigentes.
+              {t('heroSub')}
             </p>
 
             <div className="flex gap-3.5 flex-wrap">
@@ -92,7 +107,7 @@ export default async function HomePage() {
                 className="bg-white text-[var(--blue-deep)] font-semibold px-[30px] py-[15px] rounded-[10px] text-[14px] inline-flex items-center gap-2.5 hover:-translate-y-0.5 transition-all no-underline"
                 style={{ transition: 'all 0.2s' }}
               >
-                Ver el catálogo <ArrowRight size={16} strokeWidth={2.2} />
+                {t('verCatalogo')} <ArrowRight size={16} strokeWidth={2.2} />
               </Link>
               <a
                 href={`tel:+${phoneDigits(contacto.telefono)}`}
@@ -104,16 +119,18 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right: floating product card */}
-          <div
-            className="bg-white/97 rounded-[var(--r-lg)] p-6 text-[var(--ink)] relative"
+          {/* Right: floating product card — clicable, lleva a la ficha del destacado */}
+          <Link
+            href={hero?.slug ? `/tienda/${hero.slug}` : '/tienda'}
+            aria-label={`Ver ${hero?.familia ?? 'producto destacado'}`}
+            className="group block no-underline bg-white/97 rounded-[var(--r-lg)] p-6 text-[var(--ink)] relative transition-transform duration-300 hover:-translate-y-1"
             style={{
               backdropFilter: 'blur(20px)',
               boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
             }}
           >
             {/* Distintivo de promo activa (3×2 / −X%); oculto si la promo no descuenta o está apagada */}
-            {promo.activa && (promo.tipo === '3x2' || promo.tipo === 'descuento') && (
+            {promo.activa && promo.tipo !== 'envio_gratis' && (
               <div
                 className="absolute flex flex-col items-center justify-center font-bold text-[var(--ink)] z-10"
                 style={{
@@ -144,7 +161,7 @@ export default async function HomePage() {
             </div>
 
             <div className="text-[10.5px] uppercase tracking-[0.16em] text-[var(--blue)] font-bold mb-2">
-              {heroApl} · Más vendido
+              {heroApl} · {tc('masVendido')}
             </div>
             <h3 className="font-(family-name:--font-lora) text-[20px] text-[var(--ink)] leading-tight mb-1.5 font-medium">
               {hero?.familia ?? 'DESOXILAM'}
@@ -158,9 +175,9 @@ export default async function HomePage() {
               style={{ borderTop: '1px solid var(--line)' }}
             >
               <div>
-                <span className="text-[10.5px] text-[var(--ink-500)] mr-1">desde</span>
+                <span className="text-[10.5px] text-[var(--ink-500)] mr-1">{tc('desde')}</span>
                 <span className="font-(family-name:--font-lora) text-[22px] text-[var(--ink)] font-semibold">
-                  {hero?.precio_desde != null ? `${hero.precio_desde.toFixed(2).replace('.', ',')} €` : 'Consultar'}
+                  {hero?.precio_desde != null ? `${hero.precio_desde.toFixed(2).replace('.', ',')} €` : tc('consultar')}
                 </span>
               </div>
               {hero?.valoracion ? (
@@ -169,7 +186,7 @@ export default async function HomePage() {
                 </span>
               ) : null}
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -177,10 +194,10 @@ export default async function HomePage() {
       <div className="bg-[var(--bg-soft)] py-8">
         <div className="max-w-[1320px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-7">
           {[
-            { Icon: ShieldCheck, title: 'Compra 100% segura', sub: 'Pagos cifrados' },
-            { Icon: Truck, title: envio.texto_peninsula, sub: `Envío a Baleares: ${envio.coste_baleares}` },
-            { Icon: PhoneCall, title: 'Atención cercana', sub: 'Te llamamos si lo necesitas' },
-            { Icon: RotateCcw, title: 'Devolución 14 días', sub: 'Reintegro íntegro' },
+            { Icon: ShieldCheck, title: t('trustSeguraTitulo'), sub: t('trustSeguraSub') },
+            { Icon: Truck, title: envio.texto_peninsula, sub: `${t('trustBaleares')} ${envio.coste_baleares}` },
+            { Icon: PhoneCall, title: t('trustAtencionTitulo'), sub: t('trustAtencionSub') },
+            { Icon: RotateCcw, title: t('trustDevolucionTitulo'), sub: t('trustDevolucionSub') },
           ].map(({ Icon, title, sub }) => (
             <div key={title} className="flex items-center gap-3.5">
               <div
@@ -203,45 +220,27 @@ export default async function HomePage() {
         <div className="max-w-[1320px] mx-auto px-4 md:px-8">
           <div className="text-center mb-14">
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-3">
-              Catálogo
+              {t('catsEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-4"
               style={{ fontSize: 'clamp(30px, 4vw, 42px)', letterSpacing: '-0.02em' }}
             >
-              ¿Qué necesitas <em className="italic text-[var(--blue-deep)]">cuidar</em>?
+              {t('catsTitulo')} <em className="italic text-[var(--blue-deep)]">{t('catsTituloEm')}</em>
             </h2>
             <p className="text-[15px] text-[var(--ink-500)] leading-relaxed max-w-lg mx-auto">
-              Tres familias de productos formuladas para los entornos más exigentes.
+              {t('catsSub')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-7">
             {[
-              {
-                tag: 'Náutica',
-                name: 'Productos para barcos y embarcaciones',
-                desc: 'Limpiadores, pulimentos y protectores para gelcoat, fibra, teca, motores y todo lo que sufre el ambiente marino.',
-                img: '/assets/categorias/foto-productos-barco.jpg',
-                href: '/tienda/nautico',
-              },
-              {
-                tag: 'Caravaning',
-                name: 'Productos para caravanas y campers',
-                desc: 'Limpieza y mantenimiento de caravanas, autocaravanas y furgonetas camper. Para que aguanten kilómetro tras kilómetro.',
-                img: '/assets/categorias/foto-caravanas.jpg',
-                href: '/tienda/caravaning',
-              },
-              {
-                tag: 'Industrial',
-                name: 'Coches, camiones y talleres',
-                desc: 'Aditivos pre-ITV, desengrasantes y desoxidantes para vehículos pesados, talleres mecánicos y limpieza industrial.',
-                img: '/assets/categorias/foto-industrial.jpg',
-                href: '/tienda/industrial',
-              },
-            ].map(({ tag, name, desc, img, href }) => (
+              { tkey: 'nautica',    name: t('catNauticaNombre'),    desc: t('catNauticaDesc'),    img: '/assets/categorias/foto-productos-barco.jpg', href: '/tienda/nautico' },
+              { tkey: 'caravaning', name: t('catCaravaningNombre'), desc: t('catCaravaningDesc'), img: '/assets/categorias/foto-caravanas.jpg',      href: '/tienda/caravaning' },
+              { tkey: 'industrial', name: t('catIndustrialNombre'), desc: t('catIndustrialDesc'), img: '/assets/categorias/foto-industrial.jpg',     href: '/tienda/industrial' },
+            ].map(({ tkey, name, desc, img, href }) => (
               <Link
-                key={tag}
+                key={tkey}
                 href={href}
                 className="group rounded-[var(--r-lg)] overflow-hidden bg-white no-underline text-inherit block transition-transform duration-300 hover:-translate-y-1.5"
               >
@@ -249,7 +248,7 @@ export default async function HomePage() {
                 <div className="relative overflow-hidden rounded-[var(--r-lg)] mb-[18px]" style={{ aspectRatio: '5/4' }}>
                   <Image
                     src={img}
-                    alt={`${tag} — Grupo Lambea`}
+                    alt={`${tcat(tkey)} — Grupo Lambea`}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -257,7 +256,7 @@ export default async function HomePage() {
                 {/* Body */}
                 <div className="px-1.5">
                   <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--blue)] font-semibold mb-2 block">
-                    {tag}
+                    {tcat(tkey)}
                   </span>
                   <h3
                     className="font-(family-name:--font-lora) font-medium text-[var(--ink)] mb-2.5 leading-tight"
@@ -267,7 +266,7 @@ export default async function HomePage() {
                   </h3>
                   <p className="text-[14.5px] text-[var(--ink-500)] leading-relaxed mb-4">{desc}</p>
                   <span className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-[var(--blue)] transition-all group-hover:gap-3">
-                    Ver productos <ArrowRight size={14} strokeWidth={2.2} />
+                    {t('verProductos')} <ArrowRight size={14} strokeWidth={2.2} />
                   </span>
                 </div>
               </Link>
@@ -282,13 +281,13 @@ export default async function HomePage() {
           <div className="flex justify-between items-end mb-12 gap-15">
             <div>
               <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-2">
-                Lo más vendido
+                {t('destacadosEyebrow')}
               </span>
               <h2
                 className="font-(family-name:--font-lora) text-[var(--ink)] font-medium"
                 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-0.02em' }}
               >
-                Productos <em className="italic text-[var(--blue-deep)]">destacados</em>
+                {t('destacadosTitulo')} <em className="italic text-[var(--blue-deep)]">{t('destacadosTituloEm')}</em>
               </h2>
             </div>
             <Link
@@ -296,7 +295,7 @@ export default async function HomePage() {
               className="inline-flex items-center gap-2 text-[14px] font-semibold text-[var(--blue)] no-underline px-5 py-2.5 bg-white rounded-[10px] hover:-translate-y-px hover:gap-3 transition-all"
               style={{ boxShadow: '0 2px 8px rgba(14,87,132,0.08)' }}
             >
-              Ver todo el catálogo <ArrowRight size={14} strokeWidth={2.2} />
+              {t('verTodo')} <ArrowRight size={14} strokeWidth={2.2} />
             </Link>
           </div>
 
@@ -313,17 +312,17 @@ export default async function HomePage() {
         <div className="max-w-[1320px] mx-auto px-4 md:px-8">
           <div className="text-center mb-14">
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-3">
-              El resultado
+              {t('antesEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-4"
               style={{ fontSize: 'clamp(30px, 4vw, 42px)', letterSpacing: '-0.02em' }}
             >
-              Arrastra y compruébalo{' '}
-              <em className="italic text-[var(--blue-deep)]">tú mismo.</em>
+              {t('antesTitulo')}{' '}
+              <em className="italic text-[var(--blue-deep)]">{t('antesTituloEm')}</em>
             </h2>
             <p className="text-[15px] text-[var(--ink-500)] leading-relaxed max-w-lg mx-auto">
-              Sin filtros ni edición. Así quedan las superficies después de usar nuestros productos.
+              {t('antesSub')}
             </p>
           </div>
 
@@ -371,7 +370,7 @@ export default async function HomePage() {
                     href={href}
                     className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--blue)] no-underline hover:gap-2.5 transition-all"
                   >
-                    Ver producto <ArrowRight size={13} strokeWidth={2.2} />
+                    {t('verProducto')} <ArrowRight size={13} strokeWidth={2.2} />
                   </Link>
                 </div>
               </div>
@@ -425,7 +424,7 @@ export default async function HomePage() {
             >
               <div className="font-(family-name:--font-lora) text-[32px] font-semibold leading-none">+70</div>
               <div className="text-[10px] uppercase tracking-[0.18em] mt-1 font-semibold opacity-90">
-                Años de oficio
+                {t('anosOficio')}
               </div>
             </div>
           </div>
@@ -433,13 +432,13 @@ export default async function HomePage() {
           {/* Content */}
           <div>
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-4">
-              Sobre nosotros
+              {t('heritageEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-6"
               style={{ fontSize: 'clamp(34px, 4.2vw, 46px)', lineHeight: 1.1, letterSpacing: '-0.02em' }}
             >
-              Tres generaciones <em className="italic text-[var(--blue-deep)]">haciendo lo mismo bien.</em>
+              {t('heritageTitulo')} <em className="italic text-[var(--blue-deep)]">{t('heritageTituloEm')}</em>
             </h2>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-4">
               Grupo Lambea es una empresa familiar fundada en {empresa.anio_fundacion} por el &quot;Abuelo Lambea&quot;. En sus inicios fue una de
@@ -515,18 +514,18 @@ export default async function HomePage() {
             },
             {
               icon: <Truck size={30} strokeWidth={1.4} />,
-              title: 'Envío gratis',
-              sub: `${envio.texto_peninsula}. Entrega en ${envio.entrega_estimada}.`,
+              title: t('ventajasEnvioTitulo'),
+              sub: `${envio.texto_peninsula}. ${envio.entrega_estimada}.`,
             },
             {
               icon: <FlaskConical size={30} strokeWidth={1.4} />,
-              title: 'Fórmula registrada',
-              sub: `Reg. Tox. ${empresa.registro_toxicologico}. Productos homologados, biodegradables y fabricados en España.`,
+              title: t('ventajasFormulaTitulo'),
+              sub: `Reg. Tox. ${empresa.registro_toxicologico}.`,
             },
             {
               icon: <Headphones size={30} strokeWidth={1.4} />,
-              title: 'Asesoramiento directo',
-              sub: 'Habla con quien formula. Sin intermediarios, sin bots. Tres generaciones de oficio.',
+              title: t('ventajasAsesoramientoTitulo'),
+              sub: t('ventajasAsesoramientoSub'),
             },
           ].map(({ content, icon, title, sub }, i) => (
             <div
@@ -560,14 +559,14 @@ export default async function HomePage() {
           {/* Header */}
           <div className="text-center mb-14">
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-3">
-              Valoraciones
+              {t('valoracionesEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-3"
               style={{ fontSize: 'clamp(30px, 4vw, 42px)', letterSpacing: '-0.02em' }}
             >
-              Clientes que{' '}
-              <em className="italic text-[var(--blue-deep)]">confían en Lambea</em>
+              {t('valoracionesTitulo')}{' '}
+              <em className="italic text-[var(--blue-deep)]">{t('valoracionesTituloEm')}</em>
             </h2>
             <div className="flex items-center justify-center gap-2 mt-2">
               <div className="flex gap-0.5">
@@ -581,7 +580,7 @@ export default async function HomePage() {
                 ))}
               </div>
               <span className="font-semibold text-[var(--ink)] text-[15px]">{reviewStats.avg.toFixed(1)}</span>
-              <span className="text-[var(--ink-500)] text-[13px]">· {reviewStats.count} valoraciones reales</span>
+              <span className="text-[var(--ink-500)] text-[13px]">· {reviewStats.count} {t('valoracionesReales')}</span>
             </div>
           </div>
 
@@ -635,7 +634,7 @@ export default async function HomePage() {
       <section className="py-16 bg-[var(--bg-soft)]">
         <div className="max-w-[1320px] mx-auto px-4 md:px-8">
           <div className="text-center text-[11px] uppercase tracking-[0.22em] text-[var(--ink-500)] font-semibold mb-10">
-            Empresas con las que hemos trabajado
+            {t('partners')}
           </div>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
             {[

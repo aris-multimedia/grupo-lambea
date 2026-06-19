@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { useCart } from '@/components/CartProvider'
+import { esFormatoPromo } from '@/lib/cart'
 import type { Product } from '@/lib/products'
 
 interface Props {
@@ -43,6 +44,9 @@ function resolveBadge(
 export function ProductCard({ product, priority = false }: Props) {
   const { addItem, promo } = useCart()
   const pct = Number(promo.valor) || 0
+  // El 3×2 solo aplica a formatos de 1 L / 1 kg: el distintivo se muestra
+  // únicamente si la familia tiene algún formato elegible.
+  const hasPromoFormato = product.formatos?.some(esFormatoPromo) ?? false
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
@@ -94,8 +98,8 @@ export function ProductCard({ product, priority = false }: Props) {
           {badge.label}
         </span>
 
-        {/* Distintivo de promo — refleja la promo ACTIVA (3×2 / −X%) */}
-        {promo.activa && promo.tipo === '3x2' && (
+        {/* Distintivo de promo — refleja la promo ACTIVA (3×2 / −X% / combinada) */}
+        {promo.activa && (promo.tipo === '3x2' || promo.tipo === 'combinada') && hasPromoFormato && (
           <div
             className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-10 flex flex-col items-center justify-center w-11 h-11 sm:w-[54px] sm:h-[54px]"
             style={{
@@ -109,7 +113,7 @@ export function ProductCard({ product, priority = false }: Props) {
             <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.04em] text-[var(--ink)] opacity-75 mt-0.5">Gratis</span>
           </div>
         )}
-        {promo.activa && promo.tipo === 'descuento' && pct > 0 && (
+        {promo.activa && pct > 0 && (promo.tipo === 'descuento' || (promo.tipo === 'combinada' && !hasPromoFormato)) && (
           <div
             className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-10 flex flex-col items-center justify-center w-11 h-11 sm:w-[54px] sm:h-[54px]"
             style={{
@@ -165,7 +169,7 @@ export function ProductCard({ product, priority = false }: Props) {
           <button
             type="button"
             onClick={handleAdd}
-            className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full bg-[var(--blue)] hover:bg-[var(--blue-dark)] text-white flex items-center justify-center hover:scale-[1.08] transition-all cursor-pointer"
+            className="btn-add-circle w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full text-white flex items-center justify-center cursor-pointer"
             aria-label={`Añadir ${product.familia} al carrito`}
           >
             <Plus size={16} strokeWidth={2.2} className="sm:w-[18px] sm:h-[18px]" />

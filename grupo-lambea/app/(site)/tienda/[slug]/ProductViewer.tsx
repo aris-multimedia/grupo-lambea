@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import {
   Minus, Plus, ShoppingCart, ArrowRight,
-  Lock, Truck, RotateCcw, Award, PhoneCall, FileText,
+  Truck, RotateCcw, Award, PhoneCall, FileText,
 } from 'lucide-react'
 import { useCart } from '@/components/CartProvider'
+import { PaymentMethods } from '@/components/PaymentMethods'
+import { esFormatoPromo } from '@/lib/cart'
 import type { ProductVariant } from '@/lib/products'
 import type { SiteSettings } from '@/lib/settings-schema'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
@@ -98,6 +100,19 @@ export function ProductViewer({
 
   const formato = selectedVariant?.formato ?? 'Unidad'
   const aplicacion = aplicaciones[0] ?? 'generico'
+
+  // Formato de moneda (1.234,56) y total dinámico de la línea (precio × cantidad),
+  // para que el usuario vea en todo momento cuánto va a gastar al cambiar cantidad.
+  const eur = (n: number) => n.toFixed(2).replace('.', ',')
+  const totalLinea = precio * cantidad
+  // Promos: el 3×2 aplica a formatos 1 L/1 kg (tipos '3x2' y 'combinada'); el %
+  // aplica al resto (tipos 'descuento' y 'combinada'). El distintivo 3×2 solo se
+  // muestra si la promo lo incluye Y el producto tiene algún formato elegible.
+  const promoTipo = settings.promo.tipo
+  const promoPct = promoTipo === 'descuento' || promoTipo === 'combinada' ? settings.promo.valor : 0
+  const show3x2 = settings.promo.activa && (promoTipo === '3x2' || promoTipo === 'combinada')
+  const hasPromoFormato = show3x2 && sorted.some(v => esFormatoPromo(v.formato))
+  const selFormatoPromo = esFormatoPromo(formato)
 
   function selectVariant(idx: number) {
     setSliderMode(false)
@@ -291,17 +306,26 @@ export function ProductViewer({
           </p>
         )}
 
-        {/* ── Price */}
-        <div className="flex items-baseline gap-3.5 mb-7">
-          <span
-            className="font-(family-name:--font-lora) font-semibold leading-none text-[var(--ink)]"
-            style={{ fontSize: 42, letterSpacing: '-0.02em' }}
-          >
-            {precio.toFixed(2).replace('.', ',')} €
-          </span>
-          <span className="text-[12px] text-[var(--ink-500)] uppercase tracking-[0.1em] font-medium">
-            IVA incluido
-          </span>
+        {/* ── Price — el número grande es el TOTAL (precio × cantidad) y se
+            actualiza en vivo al cambiar el formato o la cantidad. */}
+        <div className="mb-7">
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <span
+              className="font-(family-name:--font-lora) font-semibold leading-none text-[var(--ink)]"
+              style={{ fontSize: 42, letterSpacing: '-0.02em', transition: 'color 0.15s ease' }}
+              aria-live="polite"
+            >
+              {eur(totalLinea)} €
+            </span>
+            <span className="text-[12px] text-[var(--ink-500)] uppercase tracking-[0.1em] font-medium">
+              IVA incluido
+            </span>
+          </div>
+          {cantidad > 1 && (
+            <p className="text-[13.5px] text-[var(--ink-500)] mt-2" aria-live="polite">
+              {cantidad} uds × <span className="font-semibold text-[var(--ink-700)]">{eur(precio)} €</span> / ud
+            </p>
+          )}
         </div>
 
         {/* ── Format / variant selector */}
@@ -342,8 +366,9 @@ export function ProductViewer({
           </div>
         )}
 
-        {/* ── Promo activa (3×2 con distintivo, o callout genérico) */}
-        {settings.promo.activa && settings.promo.tipo === '3x2' && (
+        {/* ── Promo 3×2 — SOLO en formatos de 1 litro / 1 kg. El distintivo se
+            muestra únicamente si el producto tiene algún formato elegible. */}
+        {hasPromoFormato && (
           <div
             className="rounded-[var(--r-md)] mb-[26px] flex items-stretch overflow-hidden"
             style={{ border: '2px solid var(--warning)' }}
@@ -366,84 +391,79 @@ export function ProductViewer({
             {/* Text side */}
             <div className="px-5 py-4 flex flex-col justify-center" style={{ background: '#fffbf0' }}>
               <strong className="text-[var(--ink)] text-[14px] block mb-0.5">
-                Llévate 3, paga solo 2
+                Llévate 3, paga solo 2 — formato 1 L / 1 kg
               </strong>
               <span className="text-[12.5px] text-[var(--ink-500)] leading-snug">
-                La unidad más barata sale gratis. Se aplica automáticamente al añadir al carrito.
+                {selFormatoPromo
+                  ? 'La unidad más barata sale gratis al añadir 3 del mismo tamaño.'
+                  : 'Disponible en el formato de 1 litro / 1 kg. Selecciónalo para aprovechar la oferta.'}
+                {promoTipo === 'combinada' && promoPct > 0 && (
+                  <> {' '}Y un <strong className="text-[var(--ink)]">{promoPct}%</strong> en el resto de formatos.</>
+                )}
               </span>
             </div>
           </div>
         )}
-        {settings.promo.activa && settings.promo.tipo !== '3x2' && (
+        {/* Callout de % de descuento: para promo 'descuento'/'envio_gratis', y para
+            'combinada' cuando el producto NO tiene formato elegible para el 3×2. */}
+        {settings.promo.activa &&
+          (promoTipo === 'descuento' || promoTipo === 'envio_gratis' || (promoTipo === 'combinada' && !hasPromoFormato)) && (
           <div
             className="rounded-[var(--r-md)] mb-[26px] px-5 py-4"
             style={{ border: '2px solid var(--warning)', background: '#fffbf0' }}
           >
             <strong className="text-[var(--ink)] text-[14px] block mb-0.5">
-              {settings.promo.titulo}
+              {promoTipo === 'combinada' ? `−${promoPct}% de descuento` : settings.promo.titulo}
             </strong>
-            {settings.promo.descripcion && (
-              <span className="text-[12.5px] text-[var(--ink-500)] leading-snug">
-                {settings.promo.descripcion}
-              </span>
-            )}
+            <span className="text-[12.5px] text-[var(--ink-500)] leading-snug">
+              {promoTipo === 'combinada'
+                ? 'Descuento aplicado automáticamente en el carrito.'
+                : settings.promo.descripcion}
+            </span>
           </div>
         )}
 
         {/* ── Qty + Add to cart */}
-        <div className="grid gap-3 mb-3" style={{ gridTemplateColumns: '130px 1fr' }}>
-          <div
-            className="flex items-center bg-white overflow-hidden"
-            role="group"
-            aria-label="Cantidad"
-            style={{ border: '1.5px solid var(--line)', borderRadius: 'var(--r-pill)' }}
-          >
+        <div className="grid gap-3 mb-3" style={{ gridTemplateColumns: '142px 1fr' }}>
+          <div className="qty-stepper" role="group" aria-label="Cantidad">
             <button
               onClick={() => setCantidad(c => Math.max(1, c - 1))}
+              disabled={cantidad <= 1}
               aria-label="Reducir cantidad"
-              className="flex-1 flex items-center justify-center py-3.5 text-[var(--ink-700)] hover:bg-[var(--blue-soft)] hover:text-[var(--blue)] transition-colors"
+              className="qty-btn flex-1 flex items-center justify-center py-4"
             >
-              <Minus size={14} strokeWidth={2.5} aria-hidden="true" />
+              <Minus size={16} strokeWidth={2.5} aria-hidden="true" />
             </button>
-            <span className="w-[50px] text-center text-[15px] font-semibold text-[var(--ink)]" aria-live="polite" aria-atomic="true">
+            <span
+              className="min-w-[46px] flex items-center justify-center text-center text-[16px] font-bold text-[var(--ink)] select-none"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               {cantidad}
             </span>
             <button
               onClick={() => setCantidad(c => Math.min(maxQty, c + 1))}
+              disabled={cantidad >= maxQty}
               aria-label="Aumentar cantidad"
-              className="flex-1 flex items-center justify-center py-3.5 text-[var(--ink-700)] hover:bg-[var(--blue-soft)] hover:text-[var(--blue)] transition-colors"
+              className="qty-btn flex-1 flex items-center justify-center py-4"
             >
-              <Plus size={14} strokeWidth={2.5} aria-hidden="true" />
+              <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
             </button>
           </div>
 
           <button
             onClick={handleAdd}
             disabled={agotado}
-            className="flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] transition-all disabled:cursor-not-allowed"
-            style={{
-              background: agotado ? 'var(--ink-300)' : added ? 'var(--success)' : 'var(--blue)',
-              padding: '16px 28px',
-            }}
-            onMouseEnter={e => {
-              if (!added && !agotado) {
-                e.currentTarget.style.background = 'var(--blue-dark)'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 8px 20px rgba(30,146,216,0.3)'
-              }
-            }}
-            onMouseLeave={e => {
-              if (!added && !agotado) {
-                e.currentTarget.style.background = 'var(--blue)'
-                e.currentTarget.style.transform = ''
-                e.currentTarget.style.boxShadow = ''
-              }
-            }}
+            data-added={added ? 'true' : undefined}
+            className="btn-cart flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] disabled:cursor-not-allowed"
+            style={{ padding: '16px 28px' }}
           >
             <ShoppingCart size={16} strokeWidth={2.2} />
             {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir a la cesta'}
           </button>
         </div>
+
+        {/* (El total ya se muestra en el precio grande de arriba.) */}
 
         {/* Aviso de stock bajo / agotado del formato seleccionado */}
         {stockSel !== null && stockSel > 0 && stockSel <= 3 && (
@@ -461,10 +481,9 @@ export function ProductViewer({
         {/* ── Buy now */}
         <button
           onClick={handleBuyNow}
-          className="w-full flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] mb-[22px] transition-all hover:-translate-y-px cursor-pointer"
-          style={{ background: 'var(--ink)', padding: '16px 28px' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--ink-700)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--ink)' }}
+          disabled={agotado}
+          className="btn-dark w-full flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] mb-[22px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ padding: '16px 28px' }}
         >
           Comprar ahora
           <ArrowRight size={14} strokeWidth={2.5} />
@@ -472,27 +491,7 @@ export function ProductViewer({
 
         {/* ── Payment methods */}
         <div className="mb-[22px]" style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
-          <div className="flex items-center gap-2 text-[12px] text-[var(--ink-500)] font-medium mb-3">
-            <Lock size={14} className="text-[var(--blue)]" />
-            Pago seguro con cifrado bancario
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { label: 'VISA', color: '#1a1f71' },
-              { label: '● Mastercard', color: '#eb001b' },
-            ].map(({ label, color }) => (
-              <span
-                key={label}
-                className="inline-flex items-center h-8 px-3.5 rounded-[var(--r-sm)] text-[11.5px] font-bold"
-                style={{ background: '#fff', border: '1px solid var(--line)', color }}
-              >
-                {label}
-              </span>
-            ))}
-            <span className="text-[11.5px] text-[var(--ink-500)] font-medium">
-              y demás métodos seguros vía Stripe
-            </span>
-          </div>
+          <PaymentMethods />
         </div>
 
         {/* ── Trust mini */}
@@ -538,16 +537,18 @@ export function ProductViewer({
           style={{ paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', boxShadow: '0 -6px 18px rgba(26,31,42,0.08)' }}
         >
           <div className="flex-1 min-w-0">
-            <div className="text-[11px] text-[var(--ink-500)] leading-tight truncate">{formato}</div>
+            <div className="text-[11px] text-[var(--ink-500)] leading-tight truncate">
+              {formato}{cantidad > 1 ? ` · ${cantidad} uds` : ''}
+            </div>
             <div className="text-[17px] font-bold text-[var(--ink)]">
-              {precio.toFixed(2).replace('.', ',')} €
+              {eur(totalLinea)} €
             </div>
           </div>
           <button
             onClick={handleAdd}
             disabled={agotado}
-            className="flex items-center justify-center gap-2 text-white font-semibold text-[13px] uppercase tracking-[0.04em] rounded-[10px] px-5 py-3 disabled:cursor-not-allowed"
-            style={{ background: agotado ? 'var(--ink-300)' : added ? 'var(--success)' : 'var(--blue)' }}
+            data-added={added ? 'true' : undefined}
+            className="btn-cart flex items-center justify-center gap-2 text-white font-semibold text-[13px] uppercase tracking-[0.04em] rounded-[10px] px-5 py-3 disabled:cursor-not-allowed"
           >
             <ShoppingCart size={15} strokeWidth={2.2} />
             {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir'}

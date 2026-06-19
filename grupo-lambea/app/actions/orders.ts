@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { sql } from '@/lib/db';
 import type { CartItem } from '@/types/product';
 import { getSettings } from '@/lib/settings';
-import { promoDiscount } from '@/lib/promotions';
+import { promoDiscount, promoDiscountLabel } from '@/lib/promotions';
 import Stripe from 'stripe';
 import { stripe, stripeConfigured } from '@/lib/stripe';
 import { priceCart } from '@/lib/checkout';
@@ -230,18 +230,31 @@ export async function createCheckoutSession(
   try {
     let couponId: string | undefined;
     if (discount > 0) {
+      const { promo } = await getSettings();
       const coupon = await stripe.coupons.create({
         amount_off: Math.round(discount * 100),
         currency: 'eur',
         duration: 'once',
-        name: 'Promo 3×2',
+        name: promoDiscountLabel(promo),
       });
       couponId = coupon.id;
     }
+    // Métodos de pago. Por defecto (sin env) NO se fija `payment_method_types`,
+    // de modo que Stripe Checkout muestra TODOS los métodos activados en el
+    // dashboard de la cuenta — incluido PayPal una vez se active allí. Si se
+    // quiere forzar un conjunto concreto, definir STRIPE_PAYMENT_METHODS
+    // (p. ej. "card,paypal"). No hardcodear 'paypal' aquí: si no está activado
+    // en el dashboard, Stripe rechazaría la sesión y rompería el pago.
+    const pmTypes = (process.env.STRIPE_PAYMENT_METHODS ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) as Stripe.Checkout.SessionCreateParams.PaymentMethodType[];
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       locale: 'es',
       customer_email: d.email,
+      ...(pmTypes.length ? { payment_method_types: pmTypes } : {}),
       line_items: items.map((i): Stripe.Checkout.SessionCreateParams.LineItem => ({
         quantity: i.cantidad,
         price_data: {
@@ -250,7 +263,12 @@ export async function createCheckoutSession(
           product_data: { name: `${i.familia}${i.formato ? ' · ' + i.formato : ''}` },
         },
       })),
-      ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
+      // Si hay promo automática (3×2) se aplica como `discounts`; si no, se
+      // permite introducir un código (cheque regalo). Stripe no admite ambas a
+      // la vez, y no se acumulan promociones.
+      ...(couponId
+        ? { discounts: [{ coupon: couponId }] }
+        : { allow_promotion_codes: true }),
       success_url: `${base}/pedido-confirmado?pedido=${numeroPedido}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${base}/carrito`,
       metadata: { pending_id: numeroPedido },

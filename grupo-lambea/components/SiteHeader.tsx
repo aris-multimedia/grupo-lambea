@@ -4,27 +4,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  ShoppingCart, Phone, Mail, Package,
+  Phone, Mail, Package,
   ChevronDown, Anchor, Caravan, Factory, Search, X,
 } from 'lucide-react';
-import { useCart } from './CartProvider';
-import { subtotal } from '@/lib/cart';
-import { promoDiscount } from '@/lib/promotions';
+import { CartMenu } from './CartMenu';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { phoneDigits, type SiteSettings } from '@/lib/settings-schema';
 
 const CATEGORIES = [
-  { href: '/tienda/nautico',    label: 'Náutica',    sub: 'Barcos y embarcaciones',           Icon: Anchor,  color: '#1E92D8' },
-  { href: '/tienda/caravaning', label: 'Caravaning', sub: 'Caravanas, campers y furgonetas',  Icon: Caravan, color: '#1370A8' },
-  { href: '/tienda/industrial', label: 'Industrial',  sub: 'Talleres, camiones y flotas',      Icon: Factory, color: '#0E5784' },
+  { href: '/tienda/nautico',    tkey: 'nautica',    Icon: Anchor,  color: '#1E92D8' },
+  { href: '/tienda/caravaning', tkey: 'caravaning', Icon: Caravan, color: '#1370A8' },
+  { href: '/tienda/industrial', tkey: 'industrial', Icon: Factory, color: '#0E5784' },
 ] as const;
 
 export function SiteHeader({ settings }: { settings: SiteSettings }) {
-  const { items } = useCart();
   const pathname = usePathname();
   const router = useRouter();
-  const itemCount = items.reduce((s, i) => s + i.cantidad, 0);
-  const cartTotal = subtotal(items) - promoDiscount(items, settings.promo);
+  const t = useTranslations();
 
   // Desktop dropdown
   const [tiendaOpen, setTiendaOpen] = useState(false);
@@ -207,7 +205,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               className="text-[var(--ink-700)] no-underline text-[14px] font-semibold px-[18px] py-3 transition-colors hover:text-[var(--blue)] rounded-sm"
               style={{ color: pathname === '/' ? 'var(--blue)' : undefined }}
             >
-              Inicio
+              {t('nav.inicio')}
             </Link>
 
             {/* Tienda dropdown */}
@@ -229,7 +227,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                 aria-expanded={tiendaOpen}
                 aria-haspopup="true"
               >
-                Tienda
+                {t('nav.tienda')}
                 <ChevronDown
                   size={14}
                   strokeWidth={2.5}
@@ -249,7 +247,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                     style={{ boxShadow: '0 20px 50px rgba(14,87,132,0.18)', border: '1px solid var(--line)', minWidth: 400 }}
                   >
                     <div className="p-2">
-                      {CATEGORIES.map(({ href, label, sub, Icon, color }) => (
+                      {CATEGORIES.map(({ href, tkey, Icon, color }) => (
                         <Link
                           key={href}
                           href={href}
@@ -264,9 +262,9 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                           </div>
                           <div>
                             <div className="font-semibold text-[var(--ink)] text-[14px] leading-none mb-1 group-hover:text-[var(--blue)] transition-colors">
-                              {label}
+                              {t(`cats.${tkey}`)}
                             </div>
-                            <div className="text-[12px] text-[var(--ink-500)] leading-none">{sub}</div>
+                            <div className="text-[12px] text-[var(--ink-500)] leading-none">{t(`cats.${tkey}Sub`)}</div>
                           </div>
                         </Link>
                       ))}
@@ -281,7 +279,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               className="text-[var(--ink-700)] no-underline text-[14px] font-semibold px-[18px] py-3 transition-colors hover:text-[var(--blue)] rounded-sm"
               style={{ color: pathname === '/nosotros' ? 'var(--blue)' : undefined }}
             >
-              Nosotros
+              {t('nav.nosotros')}
             </Link>
 
             <Link
@@ -289,7 +287,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               className="text-[var(--ink-700)] no-underline text-[14px] font-semibold px-[18px] py-3 transition-colors hover:text-[var(--blue)] rounded-sm"
               style={{ color: pathname === '/contacto' ? 'var(--blue)' : undefined }}
             >
-              Contacto
+              {t('nav.contacto')}
             </Link>
           </nav>
 
@@ -299,31 +297,18 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
             <button
               type="button"
               onClick={openSearch}
-              aria-label="Buscar"
+              aria-label={t('nav.buscar')}
               className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full text-[var(--ink-700)] hover:bg-[var(--blue-soft)] hover:text-[var(--blue)] transition-colors cursor-pointer"
             >
               <Search size={18} strokeWidth={1.9} />
             </button>
 
-            {/* Cart — always visible */}
-            <Link
-              href="/carrito"
-              className="flex items-center gap-2 bg-[var(--blue)] text-white no-underline px-4 md:px-5 py-2 md:py-2.5 rounded-[100px] font-semibold text-[13px] md:text-[14px] transition-colors hover:bg-[var(--blue-dark)]"
-              aria-label={`Cesta${itemCount > 0 ? `, ${itemCount} artículos` : ''}`}
-            >
-              <ShoppingCart size={15} />
-              <span className="hidden sm:inline">Cesta</span>
-              {itemCount > 0 && (
-                <span className="bg-white/25 px-1.5 py-0.5 rounded-[100px] text-[11px] font-bold">
-                  {itemCount}
-                </span>
-              )}
-              {cartTotal > 0 && (
-                <span className="hidden sm:inline text-[12px] opacity-90">
-                  {cartTotal.toFixed(2)} €
-                </span>
-              )}
-            </Link>
+            {/* Selector de idioma — visible también en móvil (en la cabecera, no
+                escondido en el menú: así el desplegable abre con sitio hacia abajo) */}
+            <LanguageSwitcher />
+
+            {/* Cesta — mini-cesta desplegable (preview + ir al pago / ver la cesta) */}
+            <CartMenu promo={settings.promo} />
 
             {/* Hamburger ↔ X — animated, mobile only */}
             <button
@@ -385,7 +370,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                 className="flex items-center justify-between no-underline border-b border-[var(--line)] py-6 active:bg-[var(--bg-soft)] -mx-5 px-5 transition-colors"
                 style={{ color: pathname === '/' ? 'var(--blue)' : 'var(--ink)' }}
               >
-                <span className="text-[22px] font-semibold">Inicio</span>
+                <span className="text-[22px] font-semibold">{t('nav.inicio')}</span>
               </Link>
 
               {/* Tienda — expandable */}
@@ -401,7 +386,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                   }}
                   aria-expanded={mobileTiendaOpen}
                 >
-                  <span className="text-[22px] font-semibold">Tienda</span>
+                  <span className="text-[22px] font-semibold">{t('nav.tienda')}</span>
                   <ChevronDown
                     size={24}
                     strokeWidth={2}
@@ -422,7 +407,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                   }}
                 >
                   <div className="pb-4 space-y-1">
-                    {CATEGORIES.map(({ href, label, sub, Icon, color }) => (
+                    {CATEGORIES.map(({ href, tkey, Icon, color }) => (
                       <Link
                         key={href}
                         href={href}
@@ -436,8 +421,8 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                           <Icon size={20} strokeWidth={1.8} style={{ color }} />
                         </div>
                         <div>
-                          <div className="font-semibold text-[var(--ink)] text-[16px] leading-tight">{label}</div>
-                          <div className="text-[13px] text-[var(--ink-500)] mt-0.5">{sub}</div>
+                          <div className="font-semibold text-[var(--ink)] text-[16px] leading-tight">{t(`cats.${tkey}`)}</div>
+                          <div className="text-[13px] text-[var(--ink-500)] mt-0.5">{t(`cats.${tkey}Sub`)}</div>
                         </div>
                       </Link>
                     ))}
@@ -452,7 +437,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                 className="flex items-center justify-between no-underline border-b border-[var(--line)] py-6 active:bg-[var(--bg-soft)] -mx-5 px-5 transition-colors"
                 style={{ color: pathname === '/nosotros' ? 'var(--blue)' : 'var(--ink)' }}
               >
-                <span className="text-[22px] font-semibold">Nosotros</span>
+                <span className="text-[22px] font-semibold">{t('nav.nosotros')}</span>
               </Link>
 
               {/* Contacto */}
@@ -462,7 +447,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                 className="flex items-center justify-between no-underline py-6 active:bg-[var(--bg-soft)] -mx-5 px-5 transition-colors"
                 style={{ color: pathname === '/contacto' ? 'var(--blue)' : 'var(--ink)' }}
               >
-                <span className="text-[22px] font-semibold">Contacto</span>
+                <span className="text-[22px] font-semibold">{t('nav.contacto')}</span>
               </Link>
             </nav>
 
@@ -521,8 +506,8 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Buscar productos"
-              placeholder="Busca un producto, fórmula o aplicación…"
+              aria-label={t('nav.buscar')}
+              placeholder={t('nav.buscarPlaceholder')}
               className="w-full pl-13 pr-5 py-3.5 md:py-4 text-[15px] md:text-[16px] bg-[var(--bg-soft)] border-2 border-[var(--line)] rounded-full text-[var(--ink)] focus:bg-white focus:border-[var(--blue)] outline-none transition-colors"
             />
           </div>

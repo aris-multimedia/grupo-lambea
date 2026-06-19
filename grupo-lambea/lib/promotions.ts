@@ -10,7 +10,7 @@
 
 import type { CartItem } from '@/types/product';
 import type { ActivePromo, PromoTipo } from './settings-schema';
-import { totalDiscount as discount3x2 } from './cart';
+import { totalDiscount as discount3x2, combinedDiscount } from './cart';
 
 export type { ActivePromo, PromoTipo };
 
@@ -43,6 +43,15 @@ export const PROMO_CATALOG: PromoPreset[] = [
     valor: { label: 'Porcentaje de descuento', sufijo: '%', placeholder: '10' },
   },
   {
+    tipo: 'combinada',
+    nombre: '3×2 + % descuento',
+    resumen:
+      'Combina las dos ofertas: 3×2 en los formatos de 1 L / 1 kg (la unidad más barata gratis por cada 3 del MISMO tamaño) Y un % de descuento en el resto de botes — incluidos los de 1 L/1 kg que no lleguen a 3 unidades. No se acumulan: lo que entra en un 3×2 no recibe además el %.',
+    tituloDefault: '3×2 + 10 % en el resto',
+    descripcionDefault: '3×2 en 1 L y 1 kg · 10 % en los demás formatos',
+    valor: { label: 'Porcentaje para el resto', sufijo: '%', placeholder: '10' },
+  },
+  {
     tipo: 'envio_gratis',
     nombre: 'Envío gratis',
     resumen:
@@ -62,7 +71,7 @@ export function promoVisible(p: ActivePromo): boolean {
   return p.activa;
 }
 
-/** Descuento de carrito según la promo activa (3×2 o % — los demás tipos no descuentan). */
+/** Descuento de carrito según la promo activa (3×2, %, combinada — envío_gratis no descuenta). */
 export function promoDiscount(items: CartItem[], p: ActivePromo): number {
   if (!promoVisible(p)) return 0;
   if (p.tipo === '3x2') return discount3x2(items);
@@ -71,12 +80,26 @@ export function promoDiscount(items: CartItem[], p: ActivePromo): number {
     const pct = Math.max(0, Math.min(100, Number(p.valor) || 0));
     return Number(((sub * pct) / 100).toFixed(2));
   }
+  if (p.tipo === 'combinada') return combinedDiscount(items, Number(p.valor) || 0).total;
   return 0;
+}
+
+/**
+ * Desglose del descuento para el resumen del carrito. Para la promo combinada
+ * devuelve la parte 3×2 y la parte %; para las demás, una sola parte.
+ */
+export function promoBreakdown(items: CartItem[], p: ActivePromo): { free: number; pct: number; total: number } {
+  if (!promoVisible(p)) return { free: 0, pct: 0, total: 0 };
+  if (p.tipo === 'combinada') return combinedDiscount(items, Number(p.valor) || 0);
+  if (p.tipo === '3x2') { const f = discount3x2(items); return { free: f, pct: 0, total: f }; }
+  if (p.tipo === 'descuento') { const d = promoDiscount(items, p); return { free: 0, pct: d, total: d }; }
+  return { free: 0, pct: 0, total: 0 };
 }
 
 /** Etiqueta corta del descuento para el resumen del carrito ("Promo 3×2", "-10 %"). */
 export function promoDiscountLabel(p: ActivePromo): string {
   if (p.tipo === '3x2') return 'Promo 3×2';
   if (p.tipo === 'descuento') return `Descuento ${Number(p.valor) || 0} %`;
+  if (p.tipo === 'combinada') return `3×2 + ${Number(p.valor) || 0} %`;
   return 'Promoción';
 }

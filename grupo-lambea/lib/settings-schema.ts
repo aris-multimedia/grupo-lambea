@@ -8,7 +8,7 @@ export type SettingType = 'text' | 'textarea' | 'boolean';
 
 // Tipos de promoción disponibles. Añadir uno nuevo = cambio de código
 // (catálogo en lib/promotions.ts). El cliente elige cuál está activa.
-export type PromoTipo = '3x2' | 'descuento' | 'envio_gratis';
+export type PromoTipo = '3x2' | 'descuento' | 'envio_gratis' | 'combinada';
 
 export interface SettingField {
   key: string; // clave plana en la tabla site_settings (group_nombre)
@@ -122,7 +122,7 @@ export function toNested(record: Record<string, string>): SiteSettings {
     },
     promo: {
       activa: b('promo_activa'),
-      tipo: ((['3x2', 'descuento', 'envio_gratis'] as const).includes(v('promo_tipo') as PromoTipo)
+      tipo: ((['3x2', 'descuento', 'envio_gratis', 'combinada'] as const).includes(v('promo_tipo') as PromoTipo)
         ? v('promo_tipo')
         : '3x2') as PromoTipo,
       titulo: v('promo_titulo'),

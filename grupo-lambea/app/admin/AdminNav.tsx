@@ -3,13 +3,14 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Package, ShoppingCart, LayoutDashboard, Image, Settings } from 'lucide-react'
+import { Package, ShoppingCart, LayoutDashboard, Image, Settings, Search } from 'lucide-react'
 
 const NAV: { href: string; label: string; Icon: React.FC<{ size?: number; style?: React.CSSProperties }>; exact?: boolean; badgeKey?: 'nuevos' }[] = [
   { href: '/admin',           label: 'Escritorio', Icon: LayoutDashboard, exact: true },
   { href: '/admin/productos', label: 'Productos',  Icon: Package },
   { href: '/admin/media',     label: 'Medios',     Icon: Image },
   { href: '/admin/pedidos',   label: 'Pedidos',    Icon: ShoppingCart, badgeKey: 'nuevos' },
+  { href: '/admin/seo',       label: 'SEO',        Icon: Search },
   { href: '/admin/ajustes',   label: 'Ajustes',    Icon: Settings },
 ]
 

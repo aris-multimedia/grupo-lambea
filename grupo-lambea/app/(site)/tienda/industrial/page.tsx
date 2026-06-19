@@ -1,22 +1,18 @@
 import type { Metadata } from 'next'
 import { Factory } from 'lucide-react'
 import { getAllProducts } from '@/lib/products'
+import { getPageSeo } from '@/lib/seo'
 import { CategoryPageLayout } from '@/components/CategoryPageLayout'
 
-export const metadata: Metadata = {
-  title: 'Productos Industriales — Talleres, camiones y flotas',
-  description:
-    'Aditivos pre-ITV para diesel y gasolina, desengrasantes de motores, limpiadores de inyectores y productos de mantenimiento para talleres mecánicos y flotas de vehículos.',
-  alternates: { canonical: '/tienda/industrial' },
-  openGraph: {
-    type: 'website',
-    siteName: 'Grupo Lambea',
-    locale: 'es_ES',
-    url: '/tienda/industrial',
-    title: 'Productos Industriales — Talleres, camiones y flotas',
-    description:
-      'Aditivos pre-ITV para diesel y gasolina, desengrasantes de motores, limpiadores de inyectores y productos de mantenimiento para talleres mecánicos y flotas de vehículos.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = await getPageSeo('industrial')
+  const url = '/tienda/industrial'
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', siteName: 'Grupo Lambea', locale: 'es_ES', url, title, description },
+  }
 }
 
 const config = {

@@ -1,22 +1,18 @@
 import type { Metadata } from 'next'
 import { Caravan } from 'lucide-react'
 import { getAllProducts } from '@/lib/products'
+import { getPageSeo } from '@/lib/seo'
 import { CategoryPageLayout } from '@/components/CategoryPageLayout'
 
-export const metadata: Metadata = {
-  title: 'Productos para Caravanas y Campers — Limpieza y mantenimiento',
-  description:
-    'Limpiadores de toldo, abrillantadores para plásticos, desengrasantes y productos para depósitos de agua. Formulados para caravanas, autocaravanas y furgonetas camper.',
-  alternates: { canonical: '/tienda/caravaning' },
-  openGraph: {
-    type: 'website',
-    siteName: 'Grupo Lambea',
-    locale: 'es_ES',
-    url: '/tienda/caravaning',
-    title: 'Productos para Caravanas y Campers — Limpieza y mantenimiento',
-    description:
-      'Limpiadores de toldo, abrillantadores para plásticos, desengrasantes y productos para depósitos de agua. Formulados para caravanas, autocaravanas y furgonetas camper.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = await getPageSeo('caravaning')
+  const url = '/tienda/caravaning'
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', siteName: 'Grupo Lambea', locale: 'es_ES', url, title, description },
+  }
 }
 
 const config = {

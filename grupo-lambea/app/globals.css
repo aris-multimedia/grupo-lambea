@@ -61,6 +61,82 @@ h1, h2, h3, h4 { letter-spacing: -0.01em; }
 /* Referenciada por el overlay de búsqueda (SiteHeader) */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* ── Botones de carrito (añadir / cantidad) ──────────────────────────────────
+   Estados hover/active definidos en CSS (no por JS onMouseEnter/Leave). Así el
+   fondo RELLENA SIEMPRE todo el botón —también al pulsar (:active) y en táctil,
+   donde el hover por JS no llegaba y el active del navegador quedaba sin fondo. */
+.btn-cart {
+  background: var(--blue);
+  transition: background 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
+}
+.btn-cart:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(30, 146, 216, 0.3);
+}
+.btn-cart:active {
+  background: var(--blue-deep);
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(30, 146, 216, 0.25);
+}
+.btn-cart:disabled {
+  background: var(--ink-300);
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+/* Estado "¡Añadido!" (verde) — se mantiene aunque haya hover/active encima. */
+.btn-cart[data-added="true"],
+.btn-cart[data-added="true"]:hover,
+.btn-cart[data-added="true"]:active {
+  background: var(--success);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Botón oscuro "Comprar ahora". */
+.btn-dark {
+  background: var(--ink);
+  transition: background 0.2s ease, transform 0.12s ease;
+}
+.btn-dark:hover { background: var(--ink-700); transform: translateY(-1px); }
+.btn-dark:active { background: #000; transform: translateY(0); }
+
+/* Botones de cantidad (+/−): relleno completo del botón, con feedback claro al
+   pulsar (escala + color sólido) y estado deshabilitado en los límites. */
+.qty-btn {
+  background: transparent;
+  color: var(--ink-700);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.qty-btn:hover:not(:disabled) { background: var(--blue-soft); color: var(--blue); }
+.qty-btn:active:not(:disabled) { background: var(--blue); color: #fff; transform: scale(0.92); }
+.qty-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.qty-btn:disabled { color: var(--ink-300); cursor: not-allowed; background: transparent; }
+
+/* Stepper de cantidad de la ficha (contenedor pill). */
+.qty-stepper {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.qty-stepper:focus-within { border-color: var(--blue); }
+
+/* Botón circular de añadir (tarjetas de producto). */
+.btn-add-circle {
+  background: var(--blue);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.btn-add-circle:hover { background: var(--blue-dark); transform: scale(1.08); }
+.btn-add-circle:active { background: var(--blue-deep); transform: scale(0.96); }
+
 /* Accesibilidad: respeta la preferencia de movimiento reducido del sistema */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
