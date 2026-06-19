@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { ChevronRight, Star } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { getProduct, getStaticSlugs, getRelated, getProductVariants, getProductReviews } from '@/lib/products'
 import { getSettings } from '@/lib/settings'
 import { ProductViewer } from './ProductViewer'
@@ -74,6 +75,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
 
   const catLabel = aplicacionLabel[product.aplicaciones[0]] ?? product.aplicaciones[0]
   const fallbackImage = product.imagen ?? '/assets/productos/prod-nautico-01.jpg'
+  const t = await getTranslations('producto')
 
   const publicDir = join(process.cwd(), 'public')
   const beforePath = `/assets/before-after/before/${product.slug}.png`
@@ -216,8 +218,8 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
                   className="font-(family-name:--font-lora) text-[var(--ink)] font-medium"
                   style={{ fontSize: 32, letterSpacing: '-0.02em' }}
                 >
-                  Lo que dicen nuestros{' '}
-                  <em className="italic text-[var(--blue-deep)]">clientes</em>
+                  {t('opinionesTitulo')}{' '}
+                  <em className="italic text-[var(--blue-deep)]">{t('opinionesTituloEm')}</em>
                 </h2>
                 {product.valoracion && product.num_valoraciones && (
                   <div className="flex items-center gap-2.5 mt-2">
@@ -236,7 +238,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
                     </span>
                     <span className="text-[var(--ink-500)] text-[13px]">
                       · {product.num_valoraciones}{' '}
-                      {product.num_valoraciones === 1 ? 'valoración' : 'valoraciones'}
+                      {product.num_valoraciones === 1 ? t('valoracionSing') : t('valoracionPlur')}
                     </span>
                   </div>
                 )}
@@ -293,7 +295,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-9"
               style={{ fontSize: 32, letterSpacing: '-0.02em' }}
             >
-              También te puede <em className="italic text-[var(--blue-deep)]">interesar</em>
+              {t('relacionadosTitulo')} <em className="italic text-[var(--blue-deep)]">{t('relacionadosTituloEm')}</em>
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-[22px]">

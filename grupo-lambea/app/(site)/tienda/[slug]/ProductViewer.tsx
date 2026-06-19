@@ -7,6 +7,7 @@ import {
   Minus, Plus, ShoppingCart, ArrowRight,
   Truck, RotateCcw, Award, PhoneCall, FileText,
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useCart } from '@/components/CartProvider'
 import { PaymentMethods } from '@/components/PaymentMethods'
 import { esFormatoPromo } from '@/lib/cart'
@@ -47,6 +48,7 @@ export function ProductViewer({
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
   const router = useRouter()
+  const t = useTranslations('producto')
 
   // Sort ascending by size: ml/g as-is, L/kg × 1000
   function toBaseUnit(formato: string): number {
@@ -163,7 +165,7 @@ export function ProductViewer({
               style={{ background: 'var(--blue)', boxShadow: '0 4px 12px rgba(30,146,216,0.3)' }}
             >
               <Award size={12} strokeWidth={2.5} />
-              Más vendido
+              {t('masVendido')}
             </span>
           )}
           {sliderMode && beforeAfterSrc ? (
@@ -247,7 +249,7 @@ export function ProductViewer({
               </div>
               <div className="absolute inset-y-0 left-1/2 w-0.5 bg-white -translate-x-1/2 z-10" />
               <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[7px] font-bold uppercase tracking-wider text-center py-0.75 z-20 leading-none">
-                Antes / Después
+                {t('antesDespues')}
               </div>
             </button>
           )}
@@ -289,12 +291,12 @@ export function ProductViewer({
             <span className="font-semibold text-[var(--ink)]" aria-hidden="true">{valoracion}.0</span>
             {numValoraciones && (
               <span className="text-[var(--ink-500)] text-[13px]">
-                ({numValoraciones} valoraciones)
+                {t('valoraciones', { n: numValoraciones })}
               </span>
             )}
             {hasReviews && (
               <a href="#opiniones" className="text-[var(--ink-500)] text-[13px] underline hover:text-[var(--blue)] transition-colors">
-                Leer opiniones
+                {t('leerOpiniones')}
               </a>
             )}
           </div>
@@ -302,7 +304,7 @@ export function ProductViewer({
 
         {codigoToxicologia && (
           <p className="text-[12px] text-[var(--ink-500)] mb-4">
-            Reg. Tox.: {codigoToxicologia}
+            {t('regTox')} {codigoToxicologia}
           </p>
         )}
 
@@ -318,12 +320,12 @@ export function ProductViewer({
               {eur(totalLinea)} €
             </span>
             <span className="text-[12px] text-[var(--ink-500)] uppercase tracking-[0.1em] font-medium">
-              IVA incluido
+              {t('ivaIncluido')}
             </span>
           </div>
           {cantidad > 1 && (
             <p className="text-[13.5px] text-[var(--ink-500)] mt-2" aria-live="polite">
-              {cantidad} uds × <span className="font-semibold text-[var(--ink-700)]">{eur(precio)} €</span> / ud
+              {t('unidadesPorUd', { cantidad, precio: eur(precio) })}
             </p>
           )}
         </div>
@@ -332,9 +334,9 @@ export function ProductViewer({
         {variants.length > 1 && (
           <div className="mb-[26px]">
             <div className="flex justify-between items-baseline text-[13px] font-semibold text-[var(--ink)] mb-3">
-              <span>Formato</span>
+              <span>{t('formato')}</span>
               <span className="text-[var(--ink-500)] font-normal">
-                Seleccionado: <strong className="text-[var(--ink)] font-semibold">{formato}</strong>
+                {t('seleccionado')} <strong className="text-[var(--ink)] font-semibold">{formato}</strong>
               </span>
             </div>
             <div
@@ -358,7 +360,7 @@ export function ProductViewer({
                 >
                   {v.formato}
                   <span className="block text-[11px] font-normal mt-[3px]" style={{ opacity: 0.85 }}>
-                    {v.stock <= 0 ? 'Agotado' : `${v.precio.toFixed(2).replace('.', ',')} €`}
+                    {v.stock <= 0 ? t('agotado') : `${v.precio.toFixed(2).replace('.', ',')} €`}
                   </span>
                 </button>
               ))}
@@ -385,20 +387,18 @@ export function ProductViewer({
                 3×2
               </span>
               <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--ink)] mt-1">
-                GRATIS
+                {t('gratis')}
               </span>
             </div>
             {/* Text side */}
             <div className="px-5 py-4 flex flex-col justify-center" style={{ background: '#fffbf0' }}>
               <strong className="text-[var(--ink)] text-[14px] block mb-0.5">
-                Llévate 3, paga solo 2 — formato 1 L / 1 kg
+                {t('promo3x2Titulo')}
               </strong>
               <span className="text-[12.5px] text-[var(--ink-500)] leading-snug">
-                {selFormatoPromo
-                  ? 'La unidad más barata sale gratis al añadir 3 del mismo tamaño.'
-                  : 'Disponible en el formato de 1 litro / 1 kg. Selecciónalo para aprovechar la oferta.'}
+                {selFormatoPromo ? t('promo3x2Sel') : t('promo3x2NoSel')}
                 {promoTipo === 'combinada' && promoPct > 0 && (
-                  <> {' '}Y un <strong className="text-[var(--ink)]">{promoPct}%</strong> en el resto de formatos.</>
+                  <> {' '}{t('promoComboResto', { pct: promoPct })}</>
                 )}
               </span>
             </div>
@@ -413,11 +413,11 @@ export function ProductViewer({
             style={{ border: '2px solid var(--warning)', background: '#fffbf0' }}
           >
             <strong className="text-[var(--ink)] text-[14px] block mb-0.5">
-              {promoTipo === 'combinada' ? `−${promoPct}% de descuento` : settings.promo.titulo}
+              {promoTipo === 'combinada' ? t('descuentoPct', { pct: promoPct }) : settings.promo.titulo}
             </strong>
             <span className="text-[12.5px] text-[var(--ink-500)] leading-snug">
               {promoTipo === 'combinada'
-                ? 'Descuento aplicado automáticamente en el carrito.'
+                ? t('descuentoAuto')
                 : settings.promo.descripcion}
             </span>
           </div>
@@ -429,7 +429,7 @@ export function ProductViewer({
             <button
               onClick={() => setCantidad(c => Math.max(1, c - 1))}
               disabled={cantidad <= 1}
-              aria-label="Reducir cantidad"
+              aria-label={t('reducirCantidad')}
               className="qty-btn flex-1 flex items-center justify-center py-4"
             >
               <Minus size={16} strokeWidth={2.5} aria-hidden="true" />
@@ -444,7 +444,7 @@ export function ProductViewer({
             <button
               onClick={() => setCantidad(c => Math.min(maxQty, c + 1))}
               disabled={cantidad >= maxQty}
-              aria-label="Aumentar cantidad"
+              aria-label={t('aumentarCantidad')}
               className="qty-btn flex-1 flex items-center justify-center py-4"
             >
               <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
@@ -459,7 +459,7 @@ export function ProductViewer({
             style={{ padding: '16px 28px' }}
           >
             <ShoppingCart size={16} strokeWidth={2.2} />
-            {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir a la cesta'}
+            {agotado ? t('agotado') : added ? t('anadido') : t('anadir')}
           </button>
         </div>
 
@@ -468,13 +468,13 @@ export function ProductViewer({
         {/* Aviso de stock bajo / agotado del formato seleccionado */}
         {stockSel !== null && stockSel > 0 && stockSel <= 3 && (
           <p className="text-[13px] font-semibold mb-3" style={{ color: 'var(--warning)' }} role="status">
-            ¡Solo quedan {stockSel} {stockSel === 1 ? 'unidad' : 'unidades'} de este formato!
+            {stockSel === 1 ? t('soloQuedanUna') : t('soloQuedanVarias', { n: stockSel })}
           </p>
         )}
         {agotado && (
           <p className="text-[13px] text-[var(--ink-500)] mb-3" role="status">
-            Este formato está agotado temporalmente. Elige otro formato o {' '}
-            <a href="/contacto" className="text-[var(--blue)] underline">consúltanos la disponibilidad</a>.
+            {t('agotadoMsg')} {' '}
+            <a href="/contacto" className="text-[var(--blue)] underline">{t('agotadoMsgLink')}</a>.
           </p>
         )}
 
@@ -485,7 +485,7 @@ export function ProductViewer({
           className="btn-dark w-full flex items-center justify-center gap-2.5 text-white font-semibold text-[14px] uppercase tracking-[0.04em] rounded-[10px] mb-[22px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           style={{ padding: '16px 28px' }}
         >
-          Comprar ahora
+          {t('comprarAhora')}
           <ArrowRight size={14} strokeWidth={2.5} />
         </button>
 
@@ -500,10 +500,10 @@ export function ProductViewer({
           style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}
         >
           {[
-            { Icon: Truck,     title: settings.envio.texto_peninsula, sub: `Entrega en ${settings.envio.entrega_estimada}` },
-            { Icon: RotateCcw, title: 'Devolución 14 días',        sub: 'Reintegro íntegro' },
-            { Icon: Award,     title: 'Producto propio',           sub: 'Fórmula registrada' },
-            { Icon: PhoneCall, title: 'Te asesoramos',             sub: settings.contacto.telefono },
+            { Icon: Truck,     title: settings.envio.texto_peninsula, sub: `${t('trustEntregaEn')} ${settings.envio.entrega_estimada}` },
+            { Icon: RotateCcw, title: t('trustDevolucion'),        sub: t('trustReintegro') },
+            { Icon: Award,     title: t('trustProducto'),          sub: t('trustFormula') },
+            { Icon: PhoneCall, title: t('trustAsesoramos'),        sub: settings.contacto.telefono },
           ].map(({ Icon, title, sub }) => (
             <div key={title} className="flex items-center gap-3 text-[13px]">
               <div className="w-10 h-10 rounded-full bg-[var(--blue-soft)] flex items-center justify-center text-[var(--blue)] flex-shrink-0">
@@ -526,7 +526,7 @@ export function ProductViewer({
               className="inline-flex items-center gap-2 text-[13px] text-[var(--blue)] hover:underline no-underline"
             >
               <FileText size={16} />
-              Descargar ficha técnica (PDF)
+              {t('descargarFicha')}
             </a>
           </div>
         )}
@@ -551,7 +551,7 @@ export function ProductViewer({
             className="btn-cart flex items-center justify-center gap-2 text-white font-semibold text-[13px] uppercase tracking-[0.04em] rounded-[10px] px-5 py-3 disabled:cursor-not-allowed"
           >
             <ShoppingCart size={15} strokeWidth={2.2} />
-            {agotado ? 'Agotado' : added ? '¡Añadido!' : 'Añadir'}
+            {agotado ? t('agotado') : added ? t('anadido') : t('anadirCorto')}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   FlaskConical, AlertTriangle, Download, Truck, RotateCcw,
   MapPin, CheckCircle2, Clock, Package, ShieldCheck, Check,
@@ -28,12 +29,8 @@ const APLICACION_LABEL: Record<string, string> = {
 }
 
 export function ProductTabs({ product, settings }: { product: TabProduct; settings: SiteSettings }) {
-  const tabs = [
-    'Descripción',
-    'Ficha técnica',
-    'Modo de uso',
-    'Envíos y devoluciones',
-  ]
+  const t = useTranslations('producto')
+  const tabs = [t('tabDescripcion'), t('tabFicha'), t('tabModoUso'), t('tabEnvios')]
   const [active, setActive] = useState(0)
 
   const soporteEmail = settings?.contacto.email ?? 'francisco@grupolambea.com'
@@ -77,7 +74,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
                   className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-[18px]"
                   style={{ fontSize: 26, letterSpacing: '-0.015em' }}
                 >
-                  Sobre{' '}
+                  {t('sobre')}{' '}
                   <em className="italic text-[var(--blue-deep)]">{product.familia}</em>
                 </h3>
                 {product.descripcion_larga.split(/\n+/).map((par) => par.trim()).filter(Boolean).map((par, i) => (
@@ -138,7 +135,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-6"
               style={{ fontSize: 26, letterSpacing: '-0.015em' }}
             >
-              Especificaciones <em className="italic text-[var(--blue-deep)]">técnicas</em>
+              {t('especsTecnicas')}
             </h3>
 
             {product.ficha_tecnica_url && (
@@ -148,8 +145,8 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               >
                 <FlaskConical size={16} className="text-[var(--blue)] shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="text-[13.5px] font-semibold text-[var(--ink)] block">Ficha técnica completa</span>
-                  <span className="text-[12px] text-[var(--ink-500)]">Especificaciones, seguridad y certificaciones</span>
+                  <span className="text-[13.5px] font-semibold text-[var(--ink)] block">{t('fichaCompleta')}</span>
+                  <span className="text-[12px] text-[var(--ink-500)]">{t('fichaCompletaSub')}</span>
                 </div>
                 <a
                   href={product.ficha_tecnica_url}
@@ -158,7 +155,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
                   className="inline-flex items-center gap-1.5 text-[var(--blue)] no-underline font-semibold text-[13px] hover:underline shrink-0"
                 >
                   <Download size={14} />
-                  Descargar
+                  {t('descargar')}
                 </a>
               </div>
             )}
@@ -167,24 +164,24 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
             <div className="rounded-[var(--r-lg)] overflow-hidden border border-[var(--line)]">
               {(
                 [
-                  ['Familia / Referencia', product.familia],
+                  [t('specFamiliaRef'), product.familia],
                   product.aplicaciones?.length > 0
-                    ? ['Sector de aplicación', product.aplicaciones.map(a => APLICACION_LABEL[a] ?? a).join(' · ')]
+                    ? [t('specSector'), product.aplicaciones.map(a => APLICACION_LABEL[a] ?? a).join(' · ')]
                     : null,
                   (product.formatos?.length ?? 0) > 0
-                    ? ['Formatos disponibles', product.formatos!.join(' · ')]
+                    ? [t('specFormatos'), product.formatos!.join(' · ')]
                     : null,
                   product.codigo_toxicologia
-                    ? ['Registro toxicológico', product.codigo_toxicologia]
+                    ? [t('specRegTox'), product.codigo_toxicologia]
                     : null,
                   product.precio_desde != null
-                    ? ['Precio mínimo (IVA inc.)', `${product.precio_desde.toFixed(2).replace('.', ',')} €`]
+                    ? [t('specPrecioMin'), `${product.precio_desde.toFixed(2).replace('.', ',')} €`]
                     : null,
                   product.precio_hasta
-                    ? ['Precio máximo (IVA inc.)', `${product.precio_hasta.toFixed(2).replace('.', ',')} €`]
+                    ? [t('specPrecioMax'), `${product.precio_hasta.toFixed(2).replace('.', ',')} €`]
                     : null,
-                  ['País de fabricación', 'España'],
-                  ['Empresa formuladora', settings.empresa.razon_social],
+                  [t('specPais'), t('espana')],
+                  [t('specEmpresa'), settings.empresa.razon_social],
                 ] as ([string, string] | null)[]
               )
                 .filter((row): row is [string, string] => row !== null)
@@ -205,7 +202,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
 
             {product.caracteristicas && product.caracteristicas.length > 0 && (
               <div className="mt-8">
-                <h4 className="text-[15px] font-semibold text-[var(--ink)] mb-4">Características del producto</h4>
+                <h4 className="text-[15px] font-semibold text-[var(--ink)] mb-4">{t('caracteristicas')}</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {product.caracteristicas.map((c) => (
                     <div key={c} className="flex items-start gap-2.5 text-[14px] text-[var(--ink-700)]">
@@ -230,7 +227,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-6"
               style={{ fontSize: 26, letterSpacing: '-0.015em' }}
             >
-              Modo de <em className="italic text-[var(--blue-deep)]">uso</em>
+              {t('modoUso')}
             </h3>
 
             {product.instrucciones_uso ? (
@@ -241,10 +238,10 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
 
                 <div className="space-y-5">
                   {[
-                    { icon: <Package size={17} />, title: 'Preparación', text: 'Asegúrate de que la superficie esté seca y libre de polvo antes de aplicar.' },
-                    { icon: <CheckCircle2 size={17} />, title: 'Aplicación', text: product.instrucciones_uso.split('.')[0] + '.' },
-                    { icon: <Clock size={17} />, title: 'Tiempo de actuación', text: 'Respeta el tiempo indicado en las instrucciones para obtener el mejor resultado.' },
-                    { icon: <ShieldCheck size={17} />, title: 'Seguridad', text: 'Usar con guantes y en zonas ventiladas. Mantener fuera del alcance de niños.' },
+                    { icon: <Package size={17} />, title: t('pasoPreparacionT'), text: t('pasoPreparacion') },
+                    { icon: <CheckCircle2 size={17} />, title: t('pasoAplicacionT'), text: product.instrucciones_uso.split('.')[0] + '.' },
+                    { icon: <Clock size={17} />, title: t('pasoTiempoT'), text: t('pasoTiempo') },
+                    { icon: <ShieldCheck size={17} />, title: t('pasoSeguridadT'), text: t('pasoSeguridad') },
                   ].map((step, i) => (
                     <div key={i} className="flex gap-4">
                       <div
@@ -263,13 +260,13 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               </>
             ) : (
               <div className="text-[15px] text-[var(--ink-500)] py-10 text-center">
-                Consulta con nuestro equipo para obtener información detallada sobre el modo de aplicación de este producto.
+                {t('modoUsoVacio')}
                 <div className="mt-4">
                   <a
                     href="tel:637916345"
                     className="inline-flex items-center gap-2 bg-[var(--blue)] text-white no-underline font-semibold text-[14px] px-6 py-2.5 rounded-[10px] hover:bg-[var(--blue-dark)] transition-colors"
                   >
-                    Llamar para consultar
+                    {t('llamarConsultar')}
                   </a>
                 </div>
               </div>
@@ -281,7 +278,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               <div>
                 <h4 className="font-semibold text-[var(--ink)] text-[14px] mb-4 flex items-center gap-2">
                   <CheckCircle2 size={15} className="text-[var(--blue)]" />
-                  Aplicaciones principales
+                  {t('aplicacionesPrincipales')}
                 </h4>
                 <ul className="space-y-2.5">
                   {product.usos.map((uso) => (
@@ -306,7 +303,7 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-6"
               style={{ fontSize: 26, letterSpacing: '-0.015em' }}
             >
-              Envíos y <em className="italic text-[var(--blue-deep)]">devoluciones</em>
+              {t('tabEnvios')}
             </h3>
 
             {/* Shipping zones — clean list with dividers */}
@@ -314,31 +311,21 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               {[
                 {
                   icon: <Truck size={18} />,
-                  title: 'Península',
-                  badge: 'Envío gratis',
-                  lines: [
-                    'Envío gratuito en todos los pedidos.',
-                    'Entrega estimada: 2–4 días laborables.',
-                    'Transportista: SEUR / MRW.',
-                  ],
+                  title: t('zonaPeninsula'),
+                  badge: t('badgeEnvioGratis'),
+                  lines: [t('peninsulaL1'), t('peninsulaL2'), t('peninsulaL3')],
                 },
                 {
                   icon: <MapPin size={18} />,
-                  title: 'Baleares',
+                  title: t('zonaBaleares'),
                   badge: costeBaleares,
-                  lines: [
-                    `Tarifa única de ${costeBaleares} para envíos a Baleares.`,
-                    'Entrega estimada: 3–5 días laborables.',
-                  ],
+                  lines: [t('balearesL1', { coste: costeBaleares }), t('balearesL2')],
                 },
                 {
                   icon: <MapPin size={18} />,
-                  title: 'Canarias, Ceuta y Melilla',
-                  badge: 'Consultar',
-                  lines: [
-                    'Para envíos a estas zonas, contacta con nosotros.',
-                    'Gastos de aduanas no incluidos.',
-                  ],
+                  title: t('zonaCanarias'),
+                  badge: t('badgeConsultar'),
+                  lines: [t('canariasL1'), t('canariasL2')],
                 },
               ].map((zone, i, arr) => (
                 <div
@@ -371,16 +358,10 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
             <div className="pt-6" style={{ borderTop: '1px solid var(--line)' }}>
               <div className="flex items-center gap-2.5 mb-4">
                 <RotateCcw size={16} className="text-[var(--ink-500)]" />
-                <h4 className="font-semibold text-[var(--ink)] text-[14px]">Política de devoluciones</h4>
+                <h4 className="font-semibold text-[var(--ink)] text-[14px]">{t('politicaDevoluciones')}</h4>
               </div>
               <ul className="space-y-3">
-                {[
-                  'Devoluciones aceptadas dentro de los 14 días desde la recepción.',
-                  'El producto debe estar en perfecto estado, sin abrir y en su embalaje original.',
-                  'Los gastos de devolución corren a cargo del comprador salvo defecto de fábrica.',
-                  'Reembolso tramitado en un plazo máximo de 7 días hábiles.',
-                  'Productos dañados en el transporte: comunicar en 24 h con fotografías.',
-                ].map((item) => (
+                {[t('dev1'), t('dev2'), t('dev3'), t('dev4'), t('dev5')].map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-[var(--ink-700)]">
                     <Check size={14} className="text-[var(--blue)] shrink-0 mt-0.5" />
                     {item}
@@ -389,11 +370,11 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
               </ul>
               <div className="mt-5 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
                 <p className="text-[13px] text-[var(--ink-500)]">
-                  Para iniciar una devolución o reclamación contacta con nosotros en{' '}
+                  {t('devContacto')}{' '}
                   <a href={`mailto:${soporteEmail}`} className="text-[var(--blue)] hover:underline">
                     {soporteEmail}
                   </a>{' '}
-                  o llama al{' '}
+                  {t('devContactoO')}{' '}
                   <a href={`tel:+${phoneDigits(soporteTel)}`} className="text-[var(--blue)] hover:underline">
                     {soporteTel}
                   </a>.
@@ -411,23 +392,24 @@ export function ProductTabs({ product, settings }: { product: TabProduct; settin
 
 /* ── Shared specs column — no outer box ─────────────────── */
 function SpecsColumn({ product, compact }: { product: TabProduct; compact?: boolean }) {
+  const t = useTranslations('producto')
   const rows = (
     [
-      ['Familia', product.familia],
+      [t('specFamilia'), product.familia],
       product.aplicaciones?.length > 0
-        ? ['Sector', product.aplicaciones.map(a => APLICACION_LABEL[a] ?? a).join(', ')]
+        ? [t('specSectorCorto'), product.aplicaciones.map(a => APLICACION_LABEL[a] ?? a).join(', ')]
         : null,
       !compact && (product.formatos?.length ?? 0) > 0
-        ? ['Formatos', product.formatos!.join(', ')]
+        ? [t('specFormatosCorto'), product.formatos!.join(', ')]
         : null,
       product.codigo_toxicologia
-        ? ['Reg. toxicológico', product.codigo_toxicologia]
+        ? [t('specRegToxCorto'), product.codigo_toxicologia]
         : null,
       product.precio_desde != null
-        ? ['Precio desde', `${product.precio_desde.toFixed(2).replace('.', ',')} €`]
+        ? [t('specPrecioDesde'), `${product.precio_desde.toFixed(2).replace('.', ',')} €`]
         : null,
       product.precio_hasta
-        ? ['Precio hasta', `${product.precio_hasta.toFixed(2).replace('.', ',')} €`]
+        ? [t('specPrecioHasta'), `${product.precio_hasta.toFixed(2).replace('.', ',')} €`]
         : null,
     ] as ([string, string] | null)[]
   ).filter((row): row is [string, string] => row !== null)
@@ -439,7 +421,7 @@ function SpecsColumn({ product, compact }: { product: TabProduct; compact?: bool
         style={{ fontSize: 16 }}
       >
         <FlaskConical size={15} className="text-[var(--blue)]" />
-        Especificaciones
+        {t('especificaciones')}
       </h4>
       <div>
         {rows.map(([key, val]) => (
@@ -458,7 +440,7 @@ function SpecsColumn({ product, compact }: { product: TabProduct; compact?: bool
         <div className="flex items-start gap-2 pt-4 text-[12px] text-[var(--ink-500)]">
           <AlertTriangle size={13} className="shrink-0 mt-0.5" />
           <span>
-            Producto con registro toxicológico. Urgencias:{' '}
+            {t('regToxAviso')}{' '}
             <a
               href="tel:915620420"
               className="font-semibold text-[var(--ink)] hover:text-[var(--blue)] transition-colors"
