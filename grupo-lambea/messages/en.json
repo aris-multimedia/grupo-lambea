@@ -218,5 +218,23 @@
     "valoracionPlur": "ratings",
     "relacionadosTitulo": "You might also be",
     "relacionadosTituloEm": "interested"
+  },
+  "categoria": {
+    "sinProductos": "There are no products in this category.",
+    "productoSing": "product",
+    "productoPlur": "products",
+    "en": "in",
+    "nauticoTagline": "Nautical · Since 1952",
+    "nauticoHeadline": "Products for boats",
+    "nauticoHeadlineEm": "and vessels.",
+    "nauticoDescription": "Marine rust removers, gelcoat cleaners, polishes for fibreglass and teak, and everything a vessel needs to withstand the marine environment.",
+    "caravaningTagline": "Caravanning · Recreational vehicles",
+    "caravaningHeadline": "Products for caravans",
+    "caravaningHeadlineEm": "and campers.",
+    "caravaningDescription": "Awning cleaners, plastic polishes, water tank products, and complete maintenance for caravans, motorhomes, and camper vans.",
+    "industrialTagline": "Industrial · Workshops and fleets",
+    "industrialHeadline": "Products for workshops",
+    "industrialHeadlineEm": "and vehicles.",
+    "industrialDescription": "Pre-MOT additives, high-performance engine degreasers, injector cleaners, and maintenance products for mechanical workshops, trucks, and fleets."
   }
 }

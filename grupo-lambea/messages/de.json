@@ -218,5 +218,23 @@
     "valoracionPlur": "Bewertungen",
     "relacionadosTitulo": "Das könnte Sie auch",
     "relacionadosTituloEm": "interessieren"
+  },
+  "categoria": {
+    "sinProductos": "Es gibt keine Produkte in dieser Kategorie.",
+    "productoSing": "Produkt",
+    "productoPlur": "Produkte",
+    "en": "in",
+    "nauticoTagline": "Nautik · Seit 1952",
+    "nauticoHeadline": "Produkte für Boote",
+    "nauticoHeadlineEm": "und Wasserfahrzeuge.",
+    "nauticoDescription": "Marine Rostentferner, Gelcoat-Reiniger, Polituren für Fiberglas und Teakholz und alles, was ein Boot braucht, um der Meeresumwelt standzuhalten.",
+    "caravaningTagline": "Caravaning · Freizeitfahrzeuge",
+    "caravaningHeadline": "Produkte für Wohnwagen",
+    "caravaningHeadlineEm": "und Camper.",
+    "caravaningDescription": "Markisenreiniger, Kunststoffglanzmittel, Produkte für Wassertanks und komplette Wartung für Wohnwagen, Wohnmobile und Campervans.",
+    "industrialTagline": "Industrie · Werkstätten und Flotten",
+    "industrialHeadline": "Produkte für Werkstätten",
+    "industrialHeadlineEm": "und Fahrzeuge.",
+    "industrialDescription": "Additiv vor der TÜV-Prüfung, Hochleistungs-Motorreiniger, Injektorenreiniger und Wartungsprodukte für Kfz-Werkstätten, Lastwagen und Flotten."
   }
 }

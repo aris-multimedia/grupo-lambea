@@ -218,5 +218,23 @@
     "valoracionPlur": "avaliações",
     "relacionadosTitulo": "Também lhe pode",
     "relacionadosTituloEm": "interessar"
+  },
+  "categoria": {
+    "sinProductos": "Não há produtos nesta categoria.",
+    "productoSing": "produto",
+    "productoPlur": "produtos",
+    "en": "em",
+    "nauticoTagline": "Náutica · Desde 1952",
+    "nauticoHeadline": "Produtos para barcos",
+    "nauticoHeadlineEm": "e embarcações.",
+    "nauticoDescription": "Desoxidantes marinhos, limpadores de gelcoat, polimentos para fibra e teca, e tudo o que uma embarcação necessita para resistir ao ambiente marinho.",
+    "caravaningTagline": "Caravanismo · Veículos de recreio",
+    "caravaningHeadline": "Produtos para caravanas",
+    "caravaningHeadlineEm": "e autocaravanas.",
+    "caravaningDescription": "Limpadores de toldo, abrilhantadores de plástico, produtos para depósito de águas e manutenção completa para caravanas, autocaravanas e furgonetas camper.",
+    "industrialTagline": "Industrial · Oficinas e frotas",
+    "industrialHeadline": "Produtos para oficinas",
+    "industrialHeadlineEm": "e veículos.",
+    "industrialDescription": "Aditivos pré-inspeção, desengordurantes de motores de alto desempenho, limpadores de injetores e produtos de manutenção para oficinas mecânicas, camiões e frotas."
   }
 }

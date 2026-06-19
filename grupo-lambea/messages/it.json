@@ -218,5 +218,23 @@
     "valoracionPlur": "recensioni",
     "relacionadosTitulo": "Potrebbe interessarti anche",
     "relacionadosTituloEm": ""
+  },
+  "categoria": {
+    "sinProductos": "Non ci sono prodotti in questa categoria.",
+    "productoSing": "prodotto",
+    "productoPlur": "prodotti",
+    "en": "in",
+    "nauticoTagline": "Nautica · Dal 1952",
+    "nauticoHeadline": "Prodotti per barche",
+    "nauticoHeadlineEm": "e imbarcazioni.",
+    "nauticoDescription": "Disossidanti marini, detergenti per gelcoat, lucidanti per fibra e teak, e tutto ciò di cui un'imbarcazione ha bisogno per resistere all'ambiente marino.",
+    "caravaningTagline": "Caravaning · Veicoli ricreativi",
+    "caravaningHeadline": "Prodotti per caravan",
+    "caravaningHeadlineEm": "e camper.",
+    "caravaningDescription": "Detergenti per tende da sole, lucidanti per plastica, prodotti per serbatoi d'acqua e manutenzione completa per caravan, camper e furgoni camperizzati.",
+    "industrialTagline": "Industriale · Officine e flotte",
+    "industrialHeadline": "Prodotti per officine",
+    "industrialHeadlineEm": "e veicoli.",
+    "industrialDescription": "Additivi pre-revisione, sgrassanti motore ad alte prestazioni, detergenti per iniettori e prodotti di manutenzione per officine meccaniche, camion e flotte."
   }
 }

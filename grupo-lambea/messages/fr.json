@@ -218,5 +218,23 @@
     "valoracionPlur": "avis",
     "relacionadosTitulo": "Vous pourriez aussi être",
     "relacionadosTituloEm": "intéressé"
+  },
+  "categoria": {
+    "sinProductos": "Il n'y a pas de produits dans cette catégorie.",
+    "productoSing": "produit",
+    "productoPlur": "produits",
+    "en": "en",
+    "nauticoTagline": "Nautisme · Depuis 1952",
+    "nauticoHeadline": "Produits pour bateaux",
+    "nauticoHeadlineEm": "et embarcations.",
+    "nauticoDescription": "Désoxydants marins, nettoyants pour gelcoat, polish pour fibre et teck, et tout ce dont une embarcation a besoin pour résister à l'environnement marin.",
+    "caravaningTagline": "Caravaning · Véhicules de loisirs",
+    "caravaningHeadline": "Produits pour caravanes",
+    "caravaningHeadlineEm": "et camping-cars.",
+    "caravaningDescription": "Nettoyants pour auvents, lustrants pour plastique, produits pour réservoirs d'eau et entretien complet pour caravanes, camping-cars et fourgons aménagés.",
+    "industrialTagline": "Industriel · Ateliers et flottes",
+    "industrialHeadline": "Produits pour ateliers",
+    "industrialHeadlineEm": "et véhicules.",
+    "industrialDescription": "Additifs pré-contrôle technique, dégraissants moteurs haute performance, nettoyants injecteurs et produits d'entretien pour ateliers mécaniques, camions et flottes."
   }
 }
