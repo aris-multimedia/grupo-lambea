@@ -236,5 +236,15 @@
     "industrialHeadline": "Productos para talleres",
     "industrialHeadlineEm": "y vehículos.",
     "industrialDescription": "Aditivos pre-ITV, desengrasantes de motores de alto rendimiento, limpiadores de inyectores y productos de mantenimiento para talleres mecánicos, camiones y flotas."
+  },
+  "buscar": {
+    "resultadosPara": "Resultados para",
+    "buscarProductos": "Buscar productos",
+    "buscar": "Buscar",
+    "hint": "Escribe qué necesitas: un producto, una aplicación (faros, casco, inyectores) o un sector (náutico, caravaning, industrial).",
+    "sinResultados": "Sin resultados para «{q}».",
+    "pruebaOtra": "Prueba con otra palabra o explora por categoría.",
+    "encontradoSing": "producto encontrado",
+    "encontradoPlur": "productos encontrados"
   }
 }

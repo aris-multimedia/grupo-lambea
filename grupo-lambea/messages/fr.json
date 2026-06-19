@@ -236,5 +236,15 @@
     "industrialHeadline": "Produits pour ateliers",
     "industrialHeadlineEm": "et véhicules.",
     "industrialDescription": "Additifs pré-contrôle technique, dégraissants moteurs haute performance, nettoyants injecteurs et produits d'entretien pour ateliers mécaniques, camions et flottes."
+  },
+  "buscar": {
+    "resultadosPara": "Résultats pour",
+    "buscarProductos": "Rechercher des produits",
+    "buscar": "Rechercher",
+    "hint": "Saisissez ce dont vous avez besoin : un produit, une application (phares, coque, injecteurs) ou un secteur (nautique, caravaning, industriel).",
+    "sinResultados": "Aucun résultat pour «{q}».",
+    "pruebaOtra": "Essayez un autre mot ou explorez par catégorie.",
+    "encontradoSing": "produit trouvé",
+    "encontradoPlur": "produits trouvés"
   }
 }

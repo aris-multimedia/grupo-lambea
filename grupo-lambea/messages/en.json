@@ -236,5 +236,15 @@
     "industrialHeadline": "Products for workshops",
     "industrialHeadlineEm": "and vehicles.",
     "industrialDescription": "Pre-MOT additives, high-performance engine degreasers, injector cleaners, and maintenance products for mechanical workshops, trucks, and fleets."
+  },
+  "buscar": {
+    "resultadosPara": "Results for",
+    "buscarProductos": "Search products",
+    "buscar": "Search",
+    "hint": "Type what you need: a product, an application (headlights, hull, injectors) or a sector (nautical, caravanning, industrial).",
+    "sinResultados": "No results for «{q}».",
+    "pruebaOtra": "Try another word or browse by category.",
+    "encontradoSing": "product found",
+    "encontradoPlur": "products found"
   }
 }

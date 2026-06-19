@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { getAllProducts } from '@/lib/products'
 import { ProductCard } from '@/components/ProductCard'
 
@@ -33,6 +34,8 @@ export default async function BuscarPage({
 }) {
   const { q = '' } = await searchParams
   const terms = normalize(q).split(/\s+/).filter(Boolean)
+  const t = await getTranslations('buscar')
+  const tc = await getTranslations('cats')
 
   const all = terms.length > 0 ? await getAllProducts() : []
   const results = all.filter((p) => {
@@ -59,10 +62,10 @@ export default async function BuscarPage({
           >
             {q ? (
               <>
-                Resultados para <em className="italic text-[#B3DEF2]">“{q}”</em>
+                {t('resultadosPara')} <em className="italic text-[#B3DEF2]">“{q}”</em>
               </>
             ) : (
-              'Buscar productos'
+              t('buscarProductos')
             )}
           </h1>
           <form action="/buscar" method="get" className="flex items-center gap-3 max-w-[640px]">
@@ -72,8 +75,8 @@ export default async function BuscarPage({
                 type="search"
                 name="q"
                 defaultValue={q}
-                placeholder="Busca un producto, fórmula o aplicación…"
-                aria-label="Buscar productos"
+                placeholder={t('buscarProductos')}
+                aria-label={t('buscarProductos')}
                 className="w-full pl-12 pr-4 py-3.5 rounded-full text-[15px] text-[var(--ink)] bg-white outline-none focus:ring-2 focus:ring-[var(--blue)]"
               />
             </div>
@@ -81,7 +84,7 @@ export default async function BuscarPage({
               type="submit"
               className="px-6 py-3.5 rounded-full bg-[var(--blue)] hover:bg-[var(--blue-dark)] font-semibold text-[14px] transition-colors cursor-pointer"
             >
-              Buscar
+              {t('buscar')}
             </button>
           </form>
         </div>
@@ -92,23 +95,21 @@ export default async function BuscarPage({
         <div className="max-w-[1320px] mx-auto px-4 md:px-8">
           {!q ? (
             <p className="text-[var(--ink-500)] text-[15px] leading-relaxed max-w-xl">
-              Escribe qué necesitas: un producto (<em>Desoxilam</em>), una aplicación
-              (<em>faros</em>, <em>casco</em>, <em>inyectores</em>) o un sector
-              (<em>náutico</em>, <em>caravaning</em>, <em>industrial</em>).
+              {t('hint')}
             </p>
           ) : results.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-[var(--ink)] text-[18px] font-medium mb-2">
-                Sin resultados para “{q}”.
+                {t('sinResultados', { q })}
               </p>
               <p className="text-[var(--ink-500)] text-[14px] mb-7">
-                Prueba con otra palabra o explora por categoría.
+                {t('pruebaOtra')}
               </p>
               <div className="flex flex-wrap justify-center gap-2.5">
                 {[
-                  ['Náutica', '/tienda/nautico'],
-                  ['Caravaning', '/tienda/caravaning'],
-                  ['Industrial', '/tienda/industrial'],
+                  [tc('nautica'), '/tienda/nautico'],
+                  [tc('caravaning'), '/tienda/caravaning'],
+                  [tc('industrial'), '/tienda/industrial'],
                 ].map(([label, href]) => (
                   <Link
                     key={href}
@@ -123,7 +124,7 @@ export default async function BuscarPage({
           ) : (
             <>
               <p className="text-[var(--ink-500)] text-[14px] mb-7">
-                {results.length} {results.length === 1 ? 'producto encontrado' : 'productos encontrados'}.
+                {results.length} {results.length === 1 ? t('encontradoSing') : t('encontradoPlur')}.
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {results.map((p) => (

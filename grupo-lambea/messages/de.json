@@ -236,5 +236,15 @@
     "industrialHeadline": "Produkte für Werkstätten",
     "industrialHeadlineEm": "und Fahrzeuge.",
     "industrialDescription": "Additiv vor der TÜV-Prüfung, Hochleistungs-Motorreiniger, Injektorenreiniger und Wartungsprodukte für Kfz-Werkstätten, Lastwagen und Flotten."
+  },
+  "buscar": {
+    "resultadosPara": "Ergebnisse für",
+    "buscarProductos": "Produkte suchen",
+    "buscar": "Suchen",
+    "hint": "Geben Sie ein, was Sie benötigen: ein Produkt, eine Anwendung (Scheinwerfer, Rumpf, Injektoren) oder einen Bereich (Nautik, Caravaning, Industrie).",
+    "sinResultados": "Keine Ergebnisse für „{q}“.",
+    "pruebaOtra": "Versuchen Sie ein anderes Wort oder stöbern Sie nach Kategorie.",
+    "encontradoSing": "Produkt gefunden",
+    "encontradoPlur": "Produkte gefunden"
   }
 }

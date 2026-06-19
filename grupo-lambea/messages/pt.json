@@ -236,5 +236,15 @@
     "industrialHeadline": "Produtos para oficinas",
     "industrialHeadlineEm": "e veículos.",
     "industrialDescription": "Aditivos pré-inspeção, desengordurantes de motores de alto desempenho, limpadores de injetores e produtos de manutenção para oficinas mecânicas, camiões e frotas."
+  },
+  "buscar": {
+    "resultadosPara": "Resultados para",
+    "buscarProductos": "Procurar produtos",
+    "buscar": "Procurar",
+    "hint": "Escreva o que precisa: um produto, uma aplicação (faróis, casco, injetores) ou um setor (náutico, caravanismo, industrial).",
+    "sinResultados": "Sem resultados para «{q}».",
+    "pruebaOtra": "Experimente outra palavra ou explore por categoria.",
+    "encontradoSing": "produto encontrado",
+    "encontradoPlur": "produtos encontrados"
   }
 }

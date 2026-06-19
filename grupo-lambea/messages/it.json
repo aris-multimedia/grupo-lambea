@@ -236,5 +236,15 @@
     "industrialHeadline": "Prodotti per officine",
     "industrialHeadlineEm": "e veicoli.",
     "industrialDescription": "Additivi pre-revisione, sgrassanti motore ad alte prestazioni, detergenti per iniettori e prodotti di manutenzione per officine meccaniche, camion e flotte."
+  },
+  "buscar": {
+    "resultadosPara": "Risultati per",
+    "buscarProductos": "Cerca prodotti",
+    "buscar": "Cerca",
+    "hint": "Scrivi cosa ti serve: un prodotto, un'applicazione (fari, scafo, iniettori) o un settore (nautico, caravan, industriale).",
+    "sinResultados": "Nessun risultato per «{q}».",
+    "pruebaOtra": "Prova con un'altra parola o esplora per categoria.",
+    "encontradoSing": "prodotto trovato",
+    "encontradoPlur": "prodotti trovati"
   }
 }
