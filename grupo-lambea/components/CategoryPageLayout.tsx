@@ -1,7 +1,8 @@
 import type { LucideIcon } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { ProductCard } from '@/components/ProductCard'
 import { PageHero } from '@/components/PageHero'
+import { localizeProducts } from '@/lib/product-i18n'
 import type { Product } from '@/lib/products'
 
 export interface CategoryConfig {
@@ -23,6 +24,7 @@ interface Props {
 export async function CategoryPageLayout({ config, products }: Props) {
   const { label, tagline, headline, headlineEm, description, heroImage, Icon } = config
   const t = await getTranslations('categoria')
+  const localized = await localizeProducts(products, await getLocale())
 
   return (
     <>
@@ -49,7 +51,7 @@ export async function CategoryPageLayout({ config, products }: Props) {
             {products.length} {products.length === 1 ? t('productoSing') : t('productoPlur')} {t('en')} {label}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {products.map((p, i) => (
+            {localized.map((p, i) => (
               <ProductCard key={p.slug} product={p} priority={i < 4} />
             ))}
           </div>

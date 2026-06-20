@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Anchor, ArrowRight, Phone, Truck, FlaskConical, Headphones, ShieldCheck, PhoneCall, RotateCcw, Star } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { getFeatured, getTopReviews, getReviewStats } from '@/lib/products'
+import { localizeProducts } from '@/lib/product-i18n'
 import { getSettings } from '@/lib/settings'
 import { getPageSeo } from '@/lib/seo'
 import { phoneDigits } from '@/lib/settings-schema'
@@ -21,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const featured = (await getFeatured()).slice(0, 4)
+  const locale = await getLocale()
+  const featured = await localizeProducts((await getFeatured()).slice(0, 4), locale)
   const { empresa, envio, promo, contacto } = await getSettings()
   const promoPct = Number(promo.valor) || 0
   // Marca corta de la promo activa para los distintivos decorativos de la home.

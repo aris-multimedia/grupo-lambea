@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { ChevronRight, Star } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { getProduct, getStaticSlugs, getRelated, getProductVariants, getProductReviews } from '@/lib/products'
+import { localizeProduct, localizeProducts } from '@/lib/product-i18n'
 import { getSettings } from '@/lib/settings'
 import { ProductViewer } from './ProductViewer'
 import { ProductTabs } from './ProductTabs'
@@ -55,7 +56,7 @@ const aplicacionLabel: Record<string, string> = {
 export default async function ProductoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const settings = await getSettings()
-  const product = await getProduct(slug)
+  let product = await getProduct(slug)
   if (!product) notFound()
   const { sql } = await import('@/lib/db')
   const [variants, related, galleryRows, reviews] = await Promise.all([
@@ -76,6 +77,11 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const catLabel = aplicacionLabel[product.aplicaciones[0]] ?? product.aplicaciones[0]
   const fallbackImage = product.imagen ?? '/assets/productos/prod-nautico-01.jpg'
   const t = await getTranslations('producto')
+  // Localizar el contenido del producto y de los relacionados según el idioma activo
+  // (base español; fallback por campo). No cambia precios, imágenes ni la marca.
+  const locale = await getLocale()
+  product = await localizeProduct(product, locale)
+  const relatedItems = await localizeProducts(related, locale)
 
   const publicDir = join(process.cwd(), 'public')
   const beforePath = `/assets/before-after/before/${product.slug}.png`
@@ -299,7 +305,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-[22px]">
-              {related.map((p) => (
+              {relatedItems.map((p) => (
                 <Link
                   key={p.slug}
                   href={`/tienda/${p.slug}`}

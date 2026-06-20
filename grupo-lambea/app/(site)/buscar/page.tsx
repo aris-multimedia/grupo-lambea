@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { getAllProducts } from '@/lib/products'
+import { localizeProducts } from '@/lib/product-i18n'
 import { ProductCard } from '@/components/ProductCard'
 
 // Las páginas de resultados de búsqueda NO se indexan (evita contenido duplicado/fino
@@ -36,8 +37,9 @@ export default async function BuscarPage({
   const terms = normalize(q).split(/\s+/).filter(Boolean)
   const t = await getTranslations('buscar')
   const tc = await getTranslations('cats')
+  const locale = await getLocale()
 
-  const all = terms.length > 0 ? await getAllProducts() : []
+  const all = terms.length > 0 ? await localizeProducts(await getAllProducts(), locale) : []
   const results = all.filter((p) => {
     const haystack = normalize(
       [

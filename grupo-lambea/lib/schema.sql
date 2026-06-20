@@ -179,3 +179,21 @@ CREATE TABLE IF NOT EXISTS page_seo (
   description TEXT,
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ── PRODUCT TRANSLATIONS (contenido de producto por idioma) ──────────────────
+-- El español vive en `products` (base). Aquí van las traducciones de los campos
+-- de texto a en/de/fr/it/pt. Se rellena con scripts/translate-products.mjs (Gemini)
+-- y se aplica en la página con lib/product-i18n.ts (fallback a es por campo).
+CREATE TABLE IF NOT EXISTS product_translations (
+  product_id        INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  locale            TEXT NOT NULL,
+  descripcion_corta TEXT,
+  descripcion_larga TEXT,
+  instrucciones_uso TEXT,
+  usos              TEXT[],
+  caracteristicas   TEXT[],
+  seo_title         TEXT,
+  seo_description   TEXT,
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (product_id, locale)
+);
