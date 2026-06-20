@@ -419,5 +419,29 @@
     "ctaTexto": "Conte-nos o seu caso e recomendamos-lhe o produto exato. Estamos há décadas a resolver os mesmos problemas que tem hoje.",
     "contactar": "Contactar agora",
     "verCatalogo": "Ver o catálogo"
+  },
+  "legal": {
+    "tag": "Legal",
+    "datosTitular": "Dados do titular",
+    "labelRazon": "Designação social",
+    "labelNif": "NIF",
+    "labelDireccion": "Morada",
+    "labelTelefono": "Telefone",
+    "labelEmail": "Email",
+    "labelMarca": "Marca comercial",
+    "avisoTitulo": "Aviso legal",
+    "condUsoT": "Condições de utilização",
+    "condUsoP1": "O acesso e utilização do website grupolambea.com são da exclusiva responsabilidade do utilizador. O mero acesso não implica qualquer relação comercial entre o utilizador e {razon}.",
+    "condUsoP2": "Este website cumpre com a legislação em vigor: Regulamento UE 2016/679 (RGPD) e a Lei 34/2002 de Serviços da Sociedade da Informação e Comércio Eletrónico (LSSI-CE).",
+    "condUsoP3": "{razon} reserva-se o direito de modificar as condições de utilização a qualquer momento e sem aviso prévio. A utilização continuada do website após qualquer modificação implica a aceitação dos novos termos.",
+    "exencionT": "Exclusão de responsabilidade",
+    "exencionP1": "{razon} não se responsabiliza por interrupções do serviço, falhas técnicas, perda de dados, ataques informáticos nem danos causados por terceiros alheios à empresa.",
+    "exencionP2": "A empresa poderá negar o acesso a utilizadores que não cumpram as presentes condições sem necessidade de aviso prévio.",
+    "propiedadT": "Propriedade intelectual e industrial",
+    "propiedadP": "Todo o conteúdo e design do website —textos, imagens, logótipos, marcas, fórmulas e código-fonte— são propriedade exclusiva de {razon} ou possuem a respetiva autorização de utilização. A sua reprodução, distribuição ou comunicação pública requer autorização expressa e por escrito do titular.",
+    "enlacesT": "Ligações externas",
+    "enlacesP": "As ligações a websites de terceiros têm caráter meramente informativo e não implicam apoio nem responsabilidade por parte de {razon} sobre o seu conteúdo.",
+    "legislacionT": "Legislação aplicável",
+    "legislacionP": "O presente aviso legal rege-se pela legislação espanhola. Para qualquer controvérsia decorrente da utilização deste website, as partes submetem-se aos Tribunais de Tarragona."
   }
 }

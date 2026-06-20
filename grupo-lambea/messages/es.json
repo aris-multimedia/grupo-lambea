@@ -419,5 +419,29 @@
     "ctaTexto": "Cuéntanos tu caso y te recomendamos el producto exacto. Llevamos décadas resolviendo los mismos problemas que tú tienes hoy.",
     "contactar": "Contactar ahora",
     "verCatalogo": "Ver el catálogo"
+  },
+  "legal": {
+    "tag": "Legal",
+    "datosTitular": "Datos del titular",
+    "labelRazon": "Razón social",
+    "labelNif": "NIF",
+    "labelDireccion": "Dirección",
+    "labelTelefono": "Teléfono",
+    "labelEmail": "Email",
+    "labelMarca": "Marca comercial",
+    "avisoTitulo": "Aviso legal",
+    "condUsoT": "Condiciones de uso",
+    "condUsoP1": "El acceso y uso del sitio web grupolambea.com es responsabilidad exclusiva del usuario. El mero acceso no implica ninguna relación comercial entre el usuario y {razon}.",
+    "condUsoP2": "Este sitio web cumple con la normativa vigente: Reglamento UE 2016/679 (RGPD) y la Ley 34/2002 de Servicios de la Sociedad de la Información y Comercio Electrónico (LSSI-CE).",
+    "condUsoP3": "{razon} se reserva el derecho de modificar las condiciones de uso en cualquier momento y sin previo aviso. El uso continuado del sitio tras cualquier modificación implica la aceptación de los nuevos términos.",
+    "exencionT": "Exención de responsabilidad",
+    "exencionP1": "{razon} no se responsabiliza de interrupciones del servicio, fallos técnicos, pérdida de datos, ataques informáticos ni daños causados por terceros ajenos a la empresa.",
+    "exencionP2": "La empresa podrá denegar el acceso a usuarios que incumplan las presentes condiciones sin necesidad de previo aviso.",
+    "propiedadT": "Propiedad intelectual e industrial",
+    "propiedadP": "Todo el contenido y diseño del sitio web —textos, imágenes, logotipos, marcas, fórmulas y código fuente— es propiedad exclusiva de {razon} o cuenta con la correspondiente autorización de uso. Su reproducción, distribución o comunicación pública requiere autorización expresa y por escrito del titular.",
+    "enlacesT": "Enlaces externos",
+    "enlacesP": "Los enlaces a sitios web de terceros tienen carácter meramente informativo y no implican respaldo ni responsabilidad por parte de {razon} sobre su contenido.",
+    "legislacionT": "Legislación aplicable",
+    "legislacionP": "El presente aviso legal se rige por la legislación española. Para cualquier controversia derivada del uso de este sitio web, las partes se someten a los Juzgados y Tribunales de Tarragona."
   }
 }

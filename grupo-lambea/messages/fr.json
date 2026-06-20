@@ -419,5 +419,29 @@
     "ctaTexto": "Décrivez-nous votre situation et nous vous recommanderons le produit exact. Nous résolvons depuis des décennies les mêmes problèmes que vous rencontrez aujourd'hui.",
     "contactar": "Nous contacter",
     "verCatalogo": "Voir le catalogue"
+  },
+  "legal": {
+    "tag": "Mentions légales",
+    "datosTitular": "Coordonnées du titulaire",
+    "labelRazon": "Raison sociale",
+    "labelNif": "NIF",
+    "labelDireccion": "Adresse",
+    "labelTelefono": "Téléphone",
+    "labelEmail": "E-mail",
+    "labelMarca": "Marque commerciale",
+    "avisoTitulo": "Mentions légales",
+    "condUsoT": "Conditions d'utilisation",
+    "condUsoP1": "L'accès et l'utilisation du site web grupolambea.com relèvent de la responsabilité exclusive de l'utilisateur. Le simple accès n'implique aucune relation commerciale entre l'utilisateur et {razon}.",
+    "condUsoP2": "Ce site web est conforme à la réglementation en vigueur : Règlement UE 2016/679 (RGPD) et la Loi 34/2002 sur les Services de la Société de l'Information et du Commerce Électronique (LSSI-CE).",
+    "condUsoP3": "{razon} se réserve le droit de modifier les conditions d'utilisation à tout moment et sans préavis. L'utilisation continue du site après toute modification implique l'acceptation des nouvelles conditions.",
+    "exencionT": "Clause de non-responsabilité",
+    "exencionP1": "{razon} n'est pas responsable des interruptions de service, des défaillances techniques, des pertes de données, des attaques informatiques ni des dommages causés par des tiers étrangers à l'entreprise.",
+    "exencionP2": "L'entreprise pourra refuser l'accès aux utilisateurs qui ne respectent pas les présentes conditions sans préavis.",
+    "propiedadT": "Propriété intellectuelle et industrielle",
+    "propiedadP": "L'intégralité du contenu et du design du site web —textes, images, logos, marques, formules et code source— est la propriété exclusive de {razon} ou bénéficie de l'autorisation d'utilisation correspondante. Sa reproduction, distribution ou communication publique nécessite l'autorisation expresse et écrite du titulaire.",
+    "enlacesT": "Liens externes",
+    "enlacesP": "Les liens vers des sites web de tiers sont fournis à titre purement informatif et n'impliquent ni l'approbation ni la responsabilité de {razon} quant à leur contenu.",
+    "legislacionT": "Législation applicable",
+    "legislacionP": "Les présentes mentions légales sont régies par la législation espagnole. Pour tout litige découlant de l'utilisation de ce site web, les parties se soumettent aux Cours et Tribunaux de Tarragone."
   }
 }

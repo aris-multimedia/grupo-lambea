@@ -419,5 +419,29 @@
     "ctaTexto": "Raccontaci il tuo caso e ti consiglieremo il prodotto esatto. Da decenni risolviamo gli stessi problemi che hai tu oggi.",
     "contactar": "Contattaci ora",
     "verCatalogo": "Vedi il catalogo"
+  },
+  "legal": {
+    "tag": "Legale",
+    "datosTitular": "Dati del titolare",
+    "labelRazon": "Ragione sociale",
+    "labelNif": "Codice fiscale",
+    "labelDireccion": "Indirizzo",
+    "labelTelefono": "Telefono",
+    "labelEmail": "Email",
+    "labelMarca": "Marchio commerciale",
+    "avisoTitulo": "Avviso legale",
+    "condUsoT": "Condizioni d'uso",
+    "condUsoP1": "L'accesso e l'uso del sito web grupolambea.com sono di esclusiva responsabilità dell'utente. Il semplice accesso non implica alcuna relazione commerciale tra l'utente e {razon}.",
+    "condUsoP2": "Questo sito web è conforme alla normativa vigente: Regolamento UE 2016/679 (GDPR) e la Legge 34/2002 sui Servizi della Società dell'Informazione e del Commercio Elettronico (LSSI-CE).",
+    "condUsoP3": "{razon} si riserva il diritto di modificare le condizioni d'uso in qualsiasi momento e senza preavviso. L'uso continuato del sito dopo qualsiasi modifica implica l'accettazione dei nuovi termini.",
+    "exencionT": "Esonero di responsabilità",
+    "exencionP1": "{razon} non è responsabile per interruzioni del servizio, guasti tecnici, perdita di dati, attacchi informatici né danni causati da terzi estranei all'azienda.",
+    "exencionP2": "L'azienda potrà negare l'accesso agli utenti che non rispettano le presenti condizioni senza necessità di preavviso.",
+    "propiedadT": "Proprietà intellettuale e industriale",
+    "propiedadP": "Tutto il contenuto e il design del sito web —testi, immagini, loghi, marchi, formule e codice sorgente— sono di proprietà esclusiva di {razon} o dispongono della corrispondente autorizzazione all'uso. La loro riproduzione, distribuzione o comunicazione pubblica richiede l'autorizzazione espressa e scritta del titolare.",
+    "enlacesT": "Link esterni",
+    "enlacesP": "I link a siti web di terzi hanno carattere meramente informativo e non implicano approvazione né responsabilità da parte di {razon} riguardo al loro contenuto.",
+    "legislacionT": "Legislazione applicabile",
+    "legislacionP": "Il presente avviso legale è regolato dalla legislazione spagnola. Per qualsiasi controversia derivante dall'uso di questo sito web, le parti si sottomettono ai Giudici e ai Tribunali di Tarragona."
   }
 }

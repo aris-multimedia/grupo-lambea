@@ -419,5 +419,29 @@
     "ctaTexto": "Schildern Sie uns Ihr Anliegen und wir empfehlen Ihnen das exakte Produkt. Wir lösen seit Jahrzehnten dieselben Probleme, die Sie heute haben.",
     "contactar": "Jetzt kontaktieren",
     "verCatalogo": "Katalog ansehen"
+  },
+  "legal": {
+    "tag": "Rechtliches",
+    "datosTitular": "Angaben zum Inhaber",
+    "labelRazon": "Firmenname",
+    "labelNif": "Steuernummer",
+    "labelDireccion": "Adresse",
+    "labelTelefono": "Telefon",
+    "labelEmail": "E-Mail",
+    "labelMarca": "Handelsmarke",
+    "avisoTitulo": "Rechtliche Hinweise",
+    "condUsoT": "Nutzungsbedingungen",
+    "condUsoP1": "Der Zugriff und die Nutzung der Website grupolambea.com liegt in der alleinigen Verantwortung des Nutzers. Der bloße Zugriff begründet keine Geschäftsbeziehung zwischen dem Nutzer und {razon}.",
+    "condUsoP2": "Diese Website entspricht den geltenden Vorschriften: EU-Verordnung 2016/679 (DSGVO) und Gesetz 34/2002 über Dienste der Informationsgesellschaft und des elektronischen Handels (LSSI-CE).",
+    "condUsoP3": "{razon} behält sich das Recht vor, die Nutzungsbedingungen jederzeit und ohne vorherige Ankündigung zu ändern. Die fortgesetzte Nutzung der Website nach einer Änderung impliziert die Annahme der neuen Bedingungen.",
+    "exencionT": "Haftungsausschluss",
+    "exencionP1": "{razon} übernimmt keine Verantwortung für Dienstunterbrechungen, technische Fehler, Datenverlust, Cyberangriffe oder Schäden, die durch Dritte außerhalb des Unternehmens verursacht werden.",
+    "exencionP2": "Das Unternehmen kann Nutzern, die gegen diese Bedingungen verstoßen, den Zugang ohne vorherige Ankündigung verweigern.",
+    "propiedadT": "Geistiges und gewerbliches Eigentum",
+    "propiedadP": "Alle Inhalte und das Design der Website – Texte, Bilder, Logos, Marken, Formeln und Quellcode – sind ausschließliches Eigentum von {razon} oder es liegt eine entsprechende Nutzungsgenehmigung vor. Ihre Vervielfältigung, Verbreitung oder öffentliche Wiedergabe bedarf der ausdrücklichen schriftlichen Genehmigung des Inhabers.",
+    "enlacesT": "Externe Links",
+    "enlacesP": "Links zu Websites Dritter dienen lediglich Informationszwecken und implizieren keine Billigung oder Verantwortung seitens {razon} für deren Inhalt.",
+    "legislacionT": "Anwendbares Recht",
+    "legislacionP": "Diese rechtlichen Hinweise unterliegen der spanischen Gesetzgebung. Für alle Streitigkeiten, die sich aus der Nutzung dieser Website ergeben, unterwerfen sich die Parteien den Gerichten von Tarragona."
   }
 }
