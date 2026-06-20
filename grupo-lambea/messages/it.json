@@ -223,8 +223,8 @@
     "opinionesTituloEm": "clienti",
     "valoracionSing": "recensione",
     "valoracionPlur": "recensioni",
-    "relacionadosTitulo": "Potrebbe interessarti anche",
-    "relacionadosTituloEm": ""
+    "relacionadosTitulo": "Potrebbe anche",
+    "relacionadosTituloEm": "interessarti"
   },
   "categoria": {
     "sinProductos": "Non ci sono prodotti in questa categoria.",
