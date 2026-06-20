@@ -102,25 +102,30 @@ h1, h2, h3, h4 { letter-spacing: -0.01em; }
 .btn-dark:hover { background: var(--ink-700); transform: translateY(-1px); }
 .btn-dark:active { background: #000; transform: translateY(0); }
 
-/* Botones de cantidad (+/−): relleno completo del botón, con feedback claro al
-   pulsar (escala + color sólido) y estado deshabilitado en los límites. */
+/* Botones de cantidad (+/−): el fondo rellena el botón ENTERO y AL INSTANTE.
+   Antes el azul del :active no cubría todo por dos motivos: (a) la transición de
+   0.15s no terminaba en el tiempo de una pulsación corta, y (b) las esquinas no
+   seguían el pill (dependían solo del overflow:hidden del contenedor, que dejaba
+   la esquina cuadrada al pulsar). Ahora: en :active el fondo entra SIN transición
+   y los botones de los extremos llevan su propio radio. El "clic" se nota
+   escalando solo el icono, no el botón. */
 .qty-btn {
   background: transparent;
   color: var(--ink-700);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 .qty-btn:hover:not(:disabled) { background: var(--blue-soft); color: var(--blue); }
-/* El fondo RELLENA todo el botón (lo recorta el overflow:hidden + border-radius
-   del pill, dejando la esquina redondeada limpia). El feedback de pulsación se
-   hace escalando SOLO el icono, no el botón: antes el scale del botón despegaba
-   el fondo del borde y se veía "cortado" en las esquinas del pill. */
-.qty-btn:active:not(:disabled) { background: var(--blue); color: #fff; }
+.qty-btn:active:not(:disabled) { background: var(--blue); color: #fff; transition: none; }
 .qty-btn svg { transition: transform 0.08s ease; }
-.qty-btn:active:not(:disabled) svg { transform: scale(0.8); }
+.qty-btn:active:not(:disabled) svg { transform: scale(0.82); }
 .qty-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
 .qty-btn:disabled { color: var(--ink-300); cursor: not-allowed; background: transparent; }
+/* Los botones de los extremos siguen la curva del pill, así el relleno azul cubre
+   hasta la esquina redondeada (y no solo un rectángulo recortado). */
+.qty-stepper > button:first-child { border-radius: var(--r-pill) 0 0 var(--r-pill); }
+.qty-stepper > button:last-child { border-radius: 0 var(--r-pill) var(--r-pill) 0; }
 
 /* Stepper de cantidad de la ficha (contenedor pill). */
 .qty-stepper {
