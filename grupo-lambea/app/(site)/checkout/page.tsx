@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft, Lock, ShoppingBag, Tag, Building2, User } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { subtotal } from '@/lib/cart';
@@ -12,6 +13,7 @@ import { subscribeToNewsletter } from '@/app/actions/newsletter';
 
 export default function CheckoutPage() {
   const { items, promo } = useCart();
+  const t = useTranslations('checkout');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tipoCliente, setTipoCliente] = useState<'particular' | 'empresa'>('particular');
@@ -27,11 +29,11 @@ export default function CheckoutPage() {
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 text-center px-6">
         <ShoppingBag size={48} className="text-[var(--line)]" strokeWidth={1.2} />
         <div>
-          <h1 className="text-[22px] font-semibold text-[var(--ink)] mb-2">La cesta está vacía</h1>
-          <p className="text-[14px] text-[var(--ink-500)]">Añade productos antes de continuar</p>
+          <h1 className="text-[22px] font-semibold text-[var(--ink)] mb-2">{t('vaciaTitulo')}</h1>
+          <p className="text-[14px] text-[var(--ink-500)]">{t('vaciaTexto')}</p>
         </div>
         <Link href="/tienda" className="bg-[var(--blue)] text-white no-underline px-6 py-2.5 rounded-[10px] font-semibold text-[14px] hover:bg-[var(--blue-dark)] transition-colors">
-          Ir a la tienda
+          {t('irTienda')}
         </Link>
       </div>
     );
@@ -47,7 +49,7 @@ export default function CheckoutPage() {
       const empresa = (form.elements.namedItem('facturacion_empresa') as HTMLInputElement)?.value;
       const nif = (form.elements.namedItem('facturacion_nif') as HTMLInputElement)?.value;
       if (!empresa?.trim() || !nif?.trim()) {
-        setError('Introduce el nombre de la empresa y el NIF/CIF para facturar a empresa.');
+        setError(t('errEmpresa'));
         return;
       }
     }
@@ -56,7 +58,7 @@ export default function CheckoutPage() {
     if (tipoCliente === 'particular' && quieroFactura) {
       const nif = (e.currentTarget.elements.namedItem('facturacion_nif') as HTMLInputElement)?.value;
       if (!nif?.trim()) {
-        setError('Introduce tu NIF/DNI para poder emitir la factura.');
+        setError(t('errNifParticular'));
         return;
       }
     }
@@ -75,7 +77,7 @@ export default function CheckoutPage() {
 
     const result = await createCheckoutSession(formData);
     if (result?.error || !result?.url) {
-      setError(result?.error ?? 'No se pudo iniciar el pago.');
+      setError(result?.error ?? t('errPago'));
       setPending(false);
       return;
     }
@@ -94,7 +96,7 @@ export default function CheckoutPage() {
         <Link href="/carrito" className="text-[var(--ink-500)] hover:text-[var(--blue)] no-underline transition-colors">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-[22px] md:text-[26px] font-semibold text-[var(--ink)]">Finalizar pedido</h1>
+        <h1 className="text-[22px] md:text-[26px] font-semibold text-[var(--ink)]">{t('titulo')}</h1>
       </div>
 
       <div className="grid gap-8 md:gap-10 grid-cols-1 lg:grid-cols-[1fr_360px]">
@@ -108,20 +110,20 @@ export default function CheckoutPage() {
 
           {/* Contact */}
           <section className="bg-white rounded-xl border border-[var(--line)] p-6">
-            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-5">Datos de contacto</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-5">{t('datosContacto')}</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="co-nombre" className={labelClass}>Nombre completo *</label>
-                <input id="co-nombre" name="nombre" required minLength={2} className={inputClass} placeholder="Juan García López" />
+                <label htmlFor="co-nombre" className={labelClass}>{t('nombreCompleto')}</label>
+                <input id="co-nombre" name="nombre" required minLength={2} className={inputClass} placeholder={t('phNombre')} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="co-email" className={labelClass}>Email *</label>
-                  <input id="co-email" name="email" type="email" required className={inputClass} placeholder="correo@ejemplo.com" />
+                  <label htmlFor="co-email" className={labelClass}>{t('email')}</label>
+                  <input id="co-email" name="email" type="email" required className={inputClass} placeholder={t('phEmail')} />
                 </div>
                 <div>
-                  <label htmlFor="co-telefono" className={labelClass}>Teléfono</label>
-                  <input id="co-telefono" name="telefono" type="tel" className={inputClass} placeholder="6XX XXX XXX" />
+                  <label htmlFor="co-telefono" className={labelClass}>{t('telefono')}</label>
+                  <input id="co-telefono" name="telefono" type="tel" className={inputClass} placeholder={t('phTelefono')} />
                 </div>
               </div>
             </div>
@@ -129,10 +131,10 @@ export default function CheckoutPage() {
 
           {/* Tipo cliente / Facturación */}
           <section className="bg-white rounded-xl border border-[var(--line)] p-6">
-            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-4">Facturación</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-4">{t('facturacion')}</h2>
 
             {/* Toggle Particular / Empresa */}
-            <div className="flex gap-2 mb-5" role="group" aria-label="Tipo de cliente">
+            <div className="flex gap-2 mb-5" role="group" aria-label={t('tipoCliente')}>
               <button
                 type="button"
                 onClick={() => setTipoCliente('particular')}
@@ -145,7 +147,7 @@ export default function CheckoutPage() {
                 }}
               >
                 <User size={14} />
-                Particular
+                {t('particular')}
               </button>
               <button
                 type="button"
@@ -159,7 +161,7 @@ export default function CheckoutPage() {
                 }}
               >
                 <Building2 size={14} />
-                Empresa
+                {t('empresa')}
               </button>
             </div>
 
@@ -167,23 +169,23 @@ export default function CheckoutPage() {
               <div className="space-y-4 pt-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="co-empresa" className={labelClass}>Nombre de la empresa *</label>
+                    <label htmlFor="co-empresa" className={labelClass}>{t('nombreEmpresa')}</label>
                     <input
                       id="co-empresa"
                       name="facturacion_empresa"
                       required
                       className={inputClass}
-                      placeholder="Empresa S.L."
+                      placeholder={t('phEmpresa')}
                     />
                   </div>
                   <div>
-                    <label htmlFor="co-nif" className={labelClass}>NIF / CIF *</label>
+                    <label htmlFor="co-nif" className={labelClass}>{t('nifCif')}</label>
                     <input
                       id="co-nif"
                       name="facturacion_nif"
                       required
                       className={inputClass}
-                      placeholder="B12345678"
+                      placeholder={t('phNif')}
                     />
                   </div>
                 </div>
@@ -196,24 +198,24 @@ export default function CheckoutPage() {
                     className="w-4 h-4 rounded accent-(--blue)"
                   />
                   <span className="text-[13px] text-(--ink-700)">
-                    La dirección fiscal es distinta a la dirección de entrega
+                    {t('dirFiscalDistinta')}
                   </span>
                 </label>
 
                 {dirFiscalDistinta && (
                   <div className="space-y-4 pl-6 border-l-2 border-(--line)">
                     <div>
-                      <label htmlFor="co-fac-dir" className={labelClass}>Dirección fiscal</label>
-                      <input id="co-fac-dir" name="facturacion_dir" className={inputClass} placeholder="Calle Mayor, 1" />
+                      <label htmlFor="co-fac-dir" className={labelClass}>{t('dirFiscal')}</label>
+                      <input id="co-fac-dir" name="facturacion_dir" className={inputClass} placeholder={t('phDirFiscal')} />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="co-fac-ciudad" className={labelClass}>Ciudad</label>
-                        <input id="co-fac-ciudad" name="facturacion_ciudad" className={inputClass} placeholder="Barcelona" />
+                        <label htmlFor="co-fac-ciudad" className={labelClass}>{t('ciudad')}</label>
+                        <input id="co-fac-ciudad" name="facturacion_ciudad" className={inputClass} placeholder={t('phCiudadFiscal')} />
                       </div>
                       <div>
-                        <label htmlFor="co-fac-cp" className={labelClass}>Código postal</label>
-                        <input id="co-fac-cp" name="facturacion_cp" className={inputClass} placeholder="08001" />
+                        <label htmlFor="co-fac-cp" className={labelClass}>{t('cp')}</label>
+                        <input id="co-fac-cp" name="facturacion_cp" className={inputClass} placeholder={t('phCpFiscal')} />
                       </div>
                     </div>
                   </div>
@@ -232,21 +234,21 @@ export default function CheckoutPage() {
                     className="w-4 h-4 rounded accent-(--blue)"
                   />
                   <span className="text-[13px] text-[var(--ink-700)]">
-                    Necesito factura con mis datos fiscales
+                    {t('necesitoFactura')}
                   </span>
                 </label>
                 {quieroFactura && (
                   <div>
-                    <label htmlFor="co-nif-part" className={labelClass}>NIF / DNI *</label>
+                    <label htmlFor="co-nif-part" className={labelClass}>{t('nifDni')}</label>
                     <input
                       id="co-nif-part"
                       name="facturacion_nif"
                       required
                       className={inputClass}
-                      placeholder="12345678Z"
+                      placeholder={t('phNifDni')}
                     />
                     <p className="text-[12px] text-[var(--ink-500)] mt-1.5">
-                      Emitiremos la factura a nombre de los datos de contacto indicados arriba.
+                      {t('facturaNombre')}
                     </p>
                   </div>
                 )}
@@ -256,45 +258,45 @@ export default function CheckoutPage() {
 
           {/* Shipping */}
           <section className="bg-white rounded-xl border border-[var(--line)] p-6">
-            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-5">Dirección de entrega</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-5">{t('dirEntrega')}</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="co-direccion" className={labelClass}>Dirección *</label>
-                <input id="co-direccion" name="direccion" required minLength={5} className={inputClass} placeholder="Calle Mayor, 12, 2ºA" />
+                <label htmlFor="co-direccion" className={labelClass}>{t('direccion')}</label>
+                <input id="co-direccion" name="direccion" required minLength={5} className={inputClass} placeholder={t('phDireccion')} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="co-ciudad" className={labelClass}>Ciudad *</label>
-                  <input id="co-ciudad" name="ciudad" required minLength={2} className={inputClass} placeholder="Valencia" />
+                  <label htmlFor="co-ciudad" className={labelClass}>{t('ciudadReq')}</label>
+                  <input id="co-ciudad" name="ciudad" required minLength={2} className={inputClass} placeholder={t('phCiudad')} />
                 </div>
                 <div>
-                  <label htmlFor="co-cp" className={labelClass}>Código postal *</label>
-                  <input id="co-cp" name="cp" required minLength={4} className={inputClass} placeholder="46001" />
+                  <label htmlFor="co-cp" className={labelClass}>{t('cpReq')}</label>
+                  <input id="co-cp" name="cp" required minLength={4} className={inputClass} placeholder={t('phCp')} />
                 </div>
               </div>
               <div>
-                <label htmlFor="co-notas" className={labelClass}>Notas del pedido</label>
-                <textarea id="co-notas" name="notas" rows={2} className={inputClass} placeholder="Instrucciones de entrega, referencias, etc." />
+                <label htmlFor="co-notas" className={labelClass}>{t('notas')}</label>
+                <textarea id="co-notas" name="notas" rows={2} className={inputClass} placeholder={t('phNotas')} />
               </div>
             </div>
           </section>
 
           {/* Payment info */}
           <section className="bg-white rounded-xl border border-[var(--line)] p-6">
-            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-3">Pago</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-3">{t('pago')}</h2>
             <p className="text-[13px] text-[var(--ink-500)] mb-4">
-              Recibirás las instrucciones de pago por email tras confirmar el pedido.
+              {t('pagoTexto')}
             </p>
             <div className="flex items-center gap-2 text-[12px] text-[var(--ink-500)]">
               <Lock size={13} className="text-[var(--success)]" />
-              Tus datos están protegidos con cifrado SSL
+              {t('sslProtegido')}
             </div>
           </section>
 
           <label className="flex items-start gap-2.5 cursor-pointer select-none">
             <input type="checkbox" name="acepta_marketing" className="w-4 h-4 mt-0.5 rounded accent-(--blue)" />
             <span className="text-[13px] text-[var(--ink-500)]">
-              Quiero recibir ofertas y novedades de Grupo Lambea por email <span className="opacity-70">(opcional)</span>.
+              {t('marketing')} <span className="opacity-70">{t('opcional')}</span>.
             </span>
           </label>
 
@@ -304,14 +306,14 @@ export default function CheckoutPage() {
             className="w-full flex items-center justify-center gap-2.5 bg-[var(--blue)] hover:bg-[var(--blue-dark)] disabled:opacity-60 text-white font-semibold text-[15px] py-4 rounded-[10px] transition-colors"
           >
             <Lock size={15} />
-            {pending ? 'Procesando pedido…' : `Confirmar pedido · ${tot.toFixed(2).replace('.', ',')} €`}
+            {pending ? t('procesando') : `${t('confirmarPedido')} · ${tot.toFixed(2).replace('.', ',')} €`}
           </button>
         </form>
 
         {/* Order summary */}
         <div className="sticky top-[100px] self-start">
           <div className="bg-white rounded-xl border border-[var(--line)] p-6">
-            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-4">Tu pedido</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--ink)] mb-4">{t('tuPedido')}</h2>
             <div className="space-y-3 mb-5">
               {items.map((item) => (
                 <div
@@ -340,7 +342,7 @@ export default function CheckoutPage() {
 
             <div className="space-y-2 text-[13px] pt-4" style={{ borderTop: '1px solid var(--line)' }}>
               <div className="flex justify-between text-[var(--ink-700)]">
-                <span>Subtotal</span>
+                <span>{t('subtotal')}</span>
                 <span>{sub.toFixed(2).replace('.', ',')} €</span>
               </div>
               {disc > 0 && (
@@ -350,14 +352,14 @@ export default function CheckoutPage() {
                 </div>
               )}
               <div className="flex justify-between text-[var(--ink-700)]">
-                <span>Envío</span>
-                <span className="text-[var(--success)] font-semibold">Gratis</span>
+                <span>{t('envio')}</span>
+                <span className="text-[var(--success)] font-semibold">{t('gratis')}</span>
               </div>
               <div
                 className="flex justify-between font-bold text-[17px] text-[var(--ink)] pt-3"
                 style={{ borderTop: '1px solid var(--line)' }}
               >
-                <span>Total</span>
+                <span>{t('total')}</span>
                 <span>{tot.toFixed(2).replace('.', ',')} €</span>
               </div>
             </div>
