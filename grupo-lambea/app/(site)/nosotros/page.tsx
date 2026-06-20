@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { PageHero } from '@/components/PageHero'
 import { getPageSeo } from '@/lib/seo'
+import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { title, description } = await getPageSeo('nosotros')
@@ -19,15 +20,17 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function NosotrosPage() {
+export default async function NosotrosPage() {
+  const t = await getTranslations('nosotros')
+  const tc = await getTranslations('cats')
   return (
     <>
       <PageHero
-        tagline="Empresa familiar · Fundada en 1952"
+        tagline={t('heroTagline')}
         TaglineIcon={Factory}
-        headline="Tres generaciones al servicio"
-        headlineEm="del profesional."
-        description="Formulamos productos de limpieza y mantenimiento para los entornos más exigentes: astilleros, talleres mecánicos y profesionales del caravaning."
+        headline={t('heroHeadline')}
+        headlineEm={t('heroHeadlineEm')}
+        description={t('heroDesc')}
         image="/assets/categorias/foto-productos-barco.jpg"
         imageAlt="Grupo Lambea — instalaciones"
         minHeight={480}
@@ -37,10 +40,10 @@ export default function NosotrosPage() {
       <div className="bg-[var(--blue)] text-white">
         <div className="max-w-[1320px] mx-auto px-4 md:px-8 py-8 md:py-10 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {[
-            { num: '1952', label: 'Año de fundación' },
-            { num: '+70', label: 'Años de experiencia' },
-            { num: '3', label: 'Generaciones familiares' },
-            { num: '+40', label: 'Productos activos en catálogo' },
+            { num: '1952', label: t('statFundacion') },
+            { num: '+70', label: t('statExperiencia') },
+            { num: '3', label: t('statGeneraciones') },
+            { num: '+40', label: t('statProductos') },
           ].map(({ num, label }) => (
             <div key={label} className="text-center">
               <div
@@ -98,7 +101,7 @@ export default function NosotrosPage() {
             >
               <div className="font-(family-name:--font-lora) text-[30px] font-semibold leading-none">1952</div>
               <div className="text-[10px] uppercase tracking-[0.18em] mt-1 font-semibold opacity-80">
-                Fundación
+                {t('fundacion')}
               </div>
             </div>
           </div>
@@ -106,23 +109,23 @@ export default function NosotrosPage() {
           {/* Text */}
           <div>
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-4">
-              Nuestra historia
+              {t('historiaEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-6"
               style={{ fontSize: 'clamp(30px, 3.8vw, 42px)', lineHeight: 1.12, letterSpacing: '-0.02em' }}
             >
-              De los astilleros del Mediterráneo{' '}
-              <em className="italic text-[var(--blue-deep)]">a cada taller de España.</em>
+              {t('historiaTitulo')}{' '}
+              <em className="italic text-[var(--blue-deep)]">{t('historiaTituloEm')}</em>
             </h2>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-5">
-              Grupo Lambea nació en 1952 como empresa metalúrgica, fabricando componentes para los astilleros más importantes del Mediterráneo. Esa experiencia directa con los entornos marinos —la humedad, la sal, la corrosión— nos enseñó lo que realmente funciona.
+              {t('historiaP1')}
             </p>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-5">
-              Con el tiempo, pasamos de fabricar piezas a fabricar los productos que esas piezas necesitaban para durar. Hoy somos una empresa química con fórmulas propias y registro toxicológico, al servicio de profesionales del sector náutico, caravaning e industrial.
+              {t('historiaP2')}
             </p>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-7">
-              Tres generaciones después, Francisco Lambea sigue al frente. Sin intermediarios. Sin franquicias. Los mismos valores de oficio y rigor que pusimos en el primer motor que tratamos en el 52.
+              {t('historiaP3')}
             </p>
 
             <blockquote
@@ -131,9 +134,9 @@ export default function NosotrosPage() {
               <span className="absolute top-0 left-3 font-serif text-[60px] text-[var(--blue)] leading-none opacity-30" aria-hidden>
                 &ldquo;
               </span>
-              Nuestra amplia experiencia fabricando para mega yates y astilleros de primer nivel nos convirtió en especialistas en formular lo que realmente aguanta.
+              {t('historiaQuote')}
               <span className="block not-italic text-[12px] text-[var(--ink-500)] mt-3 font-semibold tracking-[0.05em]">
-                — Francisco Lambea, tercera generación
+                {t('quoteAutor')}
               </span>
             </blockquote>
           </div>
@@ -145,59 +148,27 @@ export default function NosotrosPage() {
         <div className="max-w-[1320px] mx-auto w-full px-4 md:px-8">
           <div className="text-center mb-14">
             <span className="block text-[11px] uppercase tracking-[0.22em] text-[var(--blue)] font-semibold mb-3">
-              Por qué elegirnos
+              {t('porqueEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) text-[var(--ink)] font-medium"
               style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-0.02em' }}
             >
-              Lo que nos diferencia de{' '}
-              <em className="italic text-[var(--blue-deep)]">la competencia.</em>
+              {t('porqueTitulo')}{' '}
+              <em className="italic text-[var(--blue-deep)]">{t('porqueTituloEm')}</em>
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-7">
             {[
-              {
-                Icon: FlaskConical,
-                title: 'Fórmula propia',
-                desc: 'Desarrollamos cada producto en base a años de uso real en astilleros y talleres. Nada subcontratado, nada genérico.',
-              },
-              {
-                Icon: ShieldCheck,
-                title: 'Registro toxicológico',
-                desc: 'Todos nuestros productos tienen número de registro toxicológico. Conformes con normativa europea y etiquetado CLP.',
-              },
-              {
-                Icon: Leaf,
-                title: 'Biodegradables',
-                desc: 'Formulados para ser eficaces sin agredir el entorno. Especialmente importante en aplicaciones náuticas e industriales.',
-              },
-              {
-                Icon: Microscope,
-                title: 'Control de calidad',
-                desc: 'Cada lote pasa por control antes de salir. Garantizamos la consistencia que los profesionales necesitan en cada uso.',
-              },
-              {
-                Icon: Factory,
-                title: 'Fabricación en España',
-                desc: 'Producimos en nuestras propias instalaciones en Tarragona. Trazabilidad completa, sin depender de terceros.',
-              },
-              {
-                Icon: Clock,
-                title: '+70 años de oficio',
-                desc: 'No es marketing. Llevamos décadas en los mismos entornos que nuestros clientes, y eso se nota en cada fórmula.',
-              },
-              {
-                Icon: Globe2,
-                title: 'Tres sectores',
-                desc: 'Náutica, caravaning e industria. Productos distintos para entornos distintos, con la misma exigencia en todos.',
-              },
-              {
-                Icon: Award,
-                title: 'Empresa familiar',
-                desc: 'La tercera generación da la cara. Sin call centers. Cuando llamas, hablas con quien sabe de producto.',
-              },
+              { Icon: FlaskConical, title: t('cardFormulaT'), desc: t('cardFormulaD') },
+              { Icon: ShieldCheck, title: t('cardRegistroT'), desc: t('cardRegistroD') },
+              { Icon: Leaf, title: t('cardBioT'), desc: t('cardBioD') },
+              { Icon: Microscope, title: t('cardCalidadT'), desc: t('cardCalidadD') },
+              { Icon: Factory, title: t('cardEspanaT'), desc: t('cardEspanaD') },
+              { Icon: Clock, title: t('cardOficioT'), desc: t('cardOficioD') },
+              { Icon: Globe2, title: t('cardSectoresT'), desc: t('cardSectoresD') },
+              { Icon: Award, title: t('cardFamiliarT'), desc: t('cardFamiliarD') },
             ].map(({ Icon, title, desc }) => (
               <div
                 key={title}
@@ -228,37 +199,37 @@ export default function NosotrosPage() {
               className="block text-[11px] uppercase tracking-[0.22em] font-semibold mb-3"
               style={{ color: 'rgba(255,255,255,0.75)' }}
             >
-              Áreas de especialidad
+              {t('sectoresEyebrow')}
             </span>
             <h2
               className="font-(family-name:--font-lora) font-medium text-white"
               style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-0.02em' }}
             >
-              Profesionales en tres{' '}
-              <em className="italic" style={{ color: 'rgba(255,255,255,0.88)' }}>entornos.</em>
+              {t('sectoresTitulo')}{' '}
+              <em className="italic" style={{ color: 'rgba(255,255,255,0.88)' }}>{t('sectoresTituloEm')}</em>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
             {[
               {
-                label: 'Náutica',
-                tag: 'Barcos y embarcaciones',
-                desc: 'Limpiadores de gelcoat, desoxidantes marinos, pulimentos para fibra, productos para teca y limpieza de motores fueraborda. Testados en agua salada.',
+                label: tc('nautica'),
+                tag: t('secNauticaTag'),
+                desc: t('secNauticaDesc'),
                 img: '/assets/categorias/foto-productos-barco.jpg',
                 href: '/tienda/nautico',
               },
               {
-                label: 'Caravaning',
-                tag: 'Caravanas, campers y furgonetas',
-                desc: 'Limpiadores de toldo, abrillantadores para superficies plásticas, productos para depósitos de agua y mantenimiento general de vehículos recreativos.',
+                label: tc('caravaning'),
+                tag: t('secCaravaningTag'),
+                desc: t('secCaravaningDesc'),
                 img: '/assets/categorias/foto-caravanas.jpg',
                 href: '/tienda/caravaning',
               },
               {
-                label: 'Industrial',
-                tag: 'Talleres y vehículos',
-                desc: 'Aditivos pre-ITV para diesel y gasolina, desengrasantes industriales, limpiadores de inyectores y productos de mantenimiento para flotas y talleres mecánicos.',
+                label: tc('industrial'),
+                tag: t('secIndustrialTag'),
+                desc: t('secIndustrialDesc'),
                 img: '/assets/categorias/foto-industrial.jpg',
                 href: '/tienda/industrial',
               },
@@ -284,7 +255,7 @@ export default function NosotrosPage() {
                   </h3>
                   <p className="text-[13px] text-[var(--ink-500)] leading-[1.65] mb-4">{desc}</p>
                   <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-[var(--blue)] transition-all group-hover:gap-3">
-                    Ver productos <ArrowRight size={13} strokeWidth={2.2} />
+                    {t('verProductos')} <ArrowRight size={13} strokeWidth={2.2} />
                   </span>
                 </div>
               </Link>
@@ -296,7 +267,7 @@ export default function NosotrosPage() {
       {/* ── PARTNERS ─────────────────────────────────────────────── */}
       <section className="py-[60px] bg-white border-b border-[var(--line)]">
         <div className="text-center text-[12px] uppercase tracking-[0.22em] text-[var(--ink-500)] font-semibold mb-10">
-          Empresas que han confiado en nosotros
+          {t('partnersConfiado')}
         </div>
         <div className="max-w-[1100px] mx-auto px-8 flex justify-between items-center gap-10 flex-wrap">
           {[1, 2, 3, 4, 5].map((n) => (
@@ -324,25 +295,25 @@ export default function NosotrosPage() {
             className="font-(family-name:--font-lora) text-[var(--ink)] font-medium mb-5"
             style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-0.02em' }}
           >
-            ¿Necesitas asesoramiento{' '}
-            <em className="italic text-[var(--blue-deep)]">personalizado?</em>
+            {t('ctaTitulo')}{' '}
+            <em className="italic text-[var(--blue-deep)]">{t('ctaTituloEm')}</em>
           </h2>
           <p className="text-[16px] text-[var(--ink-500)] leading-[1.75] mb-8">
-            Cuéntanos tu caso y te recomendamos el producto exacto. Llevamos décadas resolviendo los mismos problemas que tú tienes hoy.
+            {t('ctaTexto')}
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
               href="/contacto"
               className="bg-[var(--blue)] text-white font-semibold px-[30px] py-[15px] rounded-[10px] text-[14px] inline-flex items-center gap-2.5 hover:-translate-y-0.5 transition-all no-underline"
             >
-              Contactar ahora <ArrowRight size={15} strokeWidth={2.2} />
+              {t('contactar')} <ArrowRight size={15} strokeWidth={2.2} />
             </Link>
             <Link
               href="/tienda"
               className="bg-white text-[var(--ink)] font-semibold px-[30px] py-[15px] rounded-[10px] text-[14px] inline-flex items-center gap-2.5 hover:-translate-y-0.5 transition-all no-underline"
               style={{ border: '1.5px solid var(--line)' }}
             >
-              Ver el catálogo
+              {t('verCatalogo')}
             </Link>
           </div>
         </div>
