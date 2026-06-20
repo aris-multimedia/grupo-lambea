@@ -116,7 +116,14 @@
     "valoracionesTitulo": "Customers who",
     "valoracionesTituloEm": "trust Lambea",
     "valoracionesReales": "real reviews",
-    "partners": "Companies we have worked with"
+    "partners": "Companies we have worked with",
+    "heritageP1": "Grupo Lambea is a family business founded in {anio} by 'Grandpa Lambea'. In its early days, it was one of the most important companies in the metal sector in Spain, manufacturing parts for the most renowned shipyards in the Mediterranean.",
+    "heritageP2": "Today, we formulate our own cleaning, polishing, and maintenance chemical products. Every bottle that leaves our facilities carries decades of real knowledge.",
+    "heritageQuote": "Our extensive experience in manufacturing sports boats and mega yachts for the most important shipyards has made us specialists in producing our own products.",
+    "heritageAutor": "— Francisco Lambea, third generation",
+    "pilarOficio": "years of experience in the sector",
+    "pilarGeneraciones": "family generations",
+    "pilarSectores": "specialised sectors"
   },
   "producto": {
     "masVendido": "Best seller",

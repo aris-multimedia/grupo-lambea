@@ -116,7 +116,14 @@
     "valoracionesTitulo": "Clientes que",
     "valoracionesTituloEm": "confían en Lambea",
     "valoracionesReales": "valoraciones reales",
-    "partners": "Empresas con las que hemos trabajado"
+    "partners": "Empresas con las que hemos trabajado",
+    "heritageP1": "Grupo Lambea es una empresa familiar fundada en {anio} por el «Abuelo Lambea». En sus inicios fue una de las empresas más importantes del sector del metal en España, fabricando piezas para los astilleros más reconocidos del Mediterráneo.",
+    "heritageP2": "Hoy formulamos nuestros propios productos químicos de limpieza, pulido y mantenimiento. Cada bote que sale de nuestras instalaciones lleva detrás décadas de conocimiento real.",
+    "heritageQuote": "Nuestra amplia experiencia en la fabricación de embarcaciones deportivas y mega yates para los astilleros más importantes nos ha convertido en especialistas a la hora de fabricar nuestros propios productos.",
+    "heritageAutor": "— Francisco Lambea, tercera generación",
+    "pilarOficio": "años de oficio en el sector",
+    "pilarGeneraciones": "generaciones familiares",
+    "pilarSectores": "sectores especializados"
   },
   "producto": {
     "masVendido": "Más vendido",

@@ -441,13 +441,10 @@ export default async function HomePage() {
               {t('heritageTitulo')} <em className="italic text-[var(--blue-deep)]">{t('heritageTituloEm')}</em>
             </h2>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-4">
-              Grupo Lambea es una empresa familiar fundada en {empresa.anio_fundacion} por el &quot;Abuelo Lambea&quot;. En sus inicios fue una de
-              las empresas más importantes del sector del metal en España, fabricando piezas para los astilleros más
-              reconocidos del Mediterráneo.
+              {t('heritageP1', { anio: empresa.anio_fundacion })}
             </p>
             <p className="text-[16px] text-[var(--ink-700)] leading-[1.8] mb-6">
-              Hoy formulamos nuestros propios productos químicos de limpieza, pulido y mantenimiento. Cada bote que
-              sale de nuestras instalaciones lleva detrás décadas de conocimiento real.
+              {t('heritageP2')}
             </p>
 
             {/* Quote */}
@@ -460,10 +457,9 @@ export default async function HomePage() {
               >
                 &ldquo;
               </span>
-              Nuestra amplia experiencia en la fabricación de embarcaciones deportivas y mega yates para los astilleros
-              más importantes nos ha convertido en especialistas a la hora de fabricar nuestros propios productos.
+              {t('heritageQuote')}
               <span className="block not-italic text-[12.5px] text-[var(--ink-500)] mt-3 font-medium tracking-[0.04em]">
-                — Francisco Lambea, tercera generación
+                {t('heritageAutor')}
               </span>
             </blockquote>
 
@@ -473,9 +469,9 @@ export default async function HomePage() {
               style={{ borderTop: '1px solid var(--line)' }}
             >
               {[
-                { num: '+70', label: 'años de oficio en el sector' },
-                { num: '3', label: 'generaciones familiares' },
-                { num: '3', label: 'sectores especializados' },
+                { num: '+70', label: t('pilarOficio') },
+                { num: '3', label: t('pilarGeneraciones') },
+                { num: '3', label: t('pilarSectores') },
               ].map(({ num, label }) => (
                 <div key={num + label} className="flex flex-col gap-1.5">
                   <div className="font-(family-name:--font-lora) text-[28px] text-[var(--blue)] font-semibold leading-none">

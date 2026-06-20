@@ -116,7 +116,14 @@
     "valoracionesTitulo": "Des clients qui",
     "valoracionesTituloEm": "font confiance à Lambea",
     "valoracionesReales": "avis réels",
-    "partners": "Entreprises avec lesquelles nous avons travaillé"
+    "partners": "Entreprises avec lesquelles nous avons travaillé",
+    "heritageP1": "Grupo Lambea est une entreprise familiale fondée en {anio} par le «Grand-père Lambea». À ses débuts, elle fut l'une des entreprises les plus importantes du secteur du métal en Espagne, fabriquant des pièces pour les chantiers navals les plus renommés de la Méditerranée.",
+    "heritageP2": "Aujourd'hui, nous formulons nos propres produits chimiques de nettoyage, de polissage et d'entretien. Chaque flacon qui quitte nos installations est le fruit de décennies de savoir-faire réel.",
+    "heritageQuote": "Notre vaste expérience dans la fabrication de bateaux de sport et de méga-yachts pour les chantiers navals les plus importants nous a permis de devenir des spécialistes dans la fabrication de nos propres produits.",
+    "heritageAutor": "— Francisco Lambea, troisième génération",
+    "pilarOficio": "années de métier dans le secteur",
+    "pilarGeneraciones": "générations familiales",
+    "pilarSectores": "secteurs spécialisés"
   },
   "producto": {
     "masVendido": "Meilleure vente",
