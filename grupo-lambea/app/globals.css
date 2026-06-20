@@ -112,7 +112,13 @@ h1, h2, h3, h4 { letter-spacing: -0.01em; }
   -webkit-tap-highlight-color: transparent;
 }
 .qty-btn:hover:not(:disabled) { background: var(--blue-soft); color: var(--blue); }
-.qty-btn:active:not(:disabled) { background: var(--blue); color: #fff; transform: scale(0.92); }
+/* El fondo RELLENA todo el botón (lo recorta el overflow:hidden + border-radius
+   del pill, dejando la esquina redondeada limpia). El feedback de pulsación se
+   hace escalando SOLO el icono, no el botón: antes el scale del botón despegaba
+   el fondo del borde y se veía "cortado" en las esquinas del pill. */
+.qty-btn:active:not(:disabled) { background: var(--blue); color: #fff; }
+.qty-btn svg { transition: transform 0.08s ease; }
+.qty-btn:active:not(:disabled) svg { transform: scale(0.8); }
 .qty-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
 .qty-btn:disabled { color: var(--ink-300); cursor: not-allowed; background: transparent; }
 
