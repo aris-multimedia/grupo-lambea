@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Package, ArrowRight, Phone, Mail, XCircle } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { getSettings } from '@/lib/settings';
 import { phoneDigits } from '@/lib/settings-schema';
 import { confirmOrderBySession } from '@/lib/checkout';
@@ -26,6 +27,7 @@ export default async function PedidoConfirmadoPage({
   }
 
   const { contacto } = await getSettings();
+  const t = await getTranslations('confirmado');
 
   // Pago no completado (cancelado o fallido): no se ha creado ningún pedido.
   if (!paid) {
@@ -35,15 +37,15 @@ export default async function PedidoConfirmadoPage({
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-50 mb-6">
             <XCircle size={40} className="text-red-500" strokeWidth={1.8} />
           </div>
-          <h1 className="text-[28px] font-semibold text-[var(--ink)] mb-3">El pago no se ha completado</h1>
+          <h1 className="text-[28px] font-semibold text-[var(--ink)] mb-3">{t('pagoNoCompletado')}</h1>
           <p className="text-[15px] text-[var(--ink-500)] leading-relaxed mb-8">
-            No se ha realizado ningún cargo y tu pedido no se ha confirmado. Puedes volver a intentarlo cuando quieras.
+            {t('pagoNoCompletadoTexto')}
           </p>
           <Link
             href="/carrito"
             className="inline-flex items-center gap-2 bg-[var(--blue)] hover:bg-[var(--blue-dark)] text-white no-underline px-7 py-3 rounded-[10px] font-semibold text-[15px] transition-colors"
           >
-            Volver a la cesta <ArrowRight size={15} />
+            {t('volverCesta')} <ArrowRight size={15} />
           </Link>
         </div>
       </div>
@@ -59,25 +61,25 @@ export default async function PedidoConfirmadoPage({
         </div>
 
         <h1 className="text-[30px] font-semibold text-[var(--ink)] mb-3">
-          ¡Pedido confirmado!
+          {t('pedidoConfirmado')}
         </h1>
 
         {numero && (
           <div className="inline-flex items-center gap-2 bg-[var(--blue-soft)] text-[var(--blue-deep)] text-[14px] font-semibold px-5 py-2 rounded-full mb-6">
             <Package size={15} />
-            Número de pedido: {numero}
+            {t('numeroPedido')} {numero}
           </div>
         )}
 
         <p className="text-[15px] text-[var(--ink-500)] leading-relaxed mb-8">
-          Hemos recibido tu pedido y tu pago correctamente. Te enviaremos un email con los detalles y el seguimiento del envío.
+          {t('recibido')}
         </p>
 
         <div
           className="rounded-xl p-5 mb-8 text-left space-y-3"
           style={{ background: 'var(--blue-soft)', border: '1px solid rgba(30,146,216,0.15)' }}
         >
-          <div className="text-[13px] font-semibold text-[var(--blue-deep)] mb-3">¿Tienes dudas?</div>
+          <div className="text-[13px] font-semibold text-[var(--blue-deep)] mb-3">{t('tienesDudas')}</div>
           <a
             href={`tel:+${phoneDigits(contacto.telefono)}`}
             className="flex items-center gap-2.5 text-[14px] text-[var(--ink-700)] hover:text-[var(--blue)] no-underline transition-colors"
@@ -98,7 +100,7 @@ export default async function PedidoConfirmadoPage({
           href="/tienda"
           className="inline-flex items-center gap-2 bg-[var(--blue)] hover:bg-[var(--blue-dark)] text-white no-underline px-7 py-3 rounded-[10px] font-semibold text-[15px] transition-colors"
         >
-          Seguir comprando
+          {t('seguirComprando')}
           <ArrowRight size={15} />
         </Link>
       </div>

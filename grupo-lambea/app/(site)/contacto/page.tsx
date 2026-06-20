@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Phone, Mail, MapPin, Clock, AlertTriangle, MessageCircle } from 'lucide-react'
 import { ContactForm } from './ContactForm'
 import { PageHero } from '@/components/PageHero'
+import { getTranslations } from 'next-intl/server'
 import { getSettings } from '@/lib/settings'
 import { getPageSeo } from '@/lib/seo'
 import { phoneDigits } from '@/lib/settings-schema'
@@ -19,13 +20,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactoPage() {
   const { contacto, empresa } = await getSettings()
+  const t = await getTranslations('contacto')
   return (
     <>
       <PageHero
-        tagline="Estamos aquí"
-        headline="Hablemos sin"
-        headlineEm="intermediarios."
-        description="Cuando contactas con Grupo Lambea, hablas directamente con quien formula y conoce cada producto. Sin bots ni call centers."
+        tagline={t('heroTagline')}
+        headline={t('heroHeadline')}
+        headlineEm={t('heroHeadlineEm')}
+        description={t('heroDesc')}
       />
 
       {/* ── QUICK CONTACT STRIP ──────────────────────────────────── */}
@@ -42,8 +44,8 @@ export default async function ContactoPage() {
               <MessageCircle size={24} strokeWidth={1.8} className="text-(--blue)" />
             </div>
             <div>
-              <div className="font-bold text-(--ink) text-[15px] mb-0.5">WhatsApp</div>
-              <div className="text-(--ink-500) text-[13.5px] mb-1">Respuesta rápida</div>
+              <div className="font-bold text-(--ink) text-[15px] mb-0.5">{t('whatsapp')}</div>
+              <div className="text-(--ink-500) text-[13.5px] mb-1">{t('whatsappSub')}</div>
               <div className="text-(--blue) font-semibold text-[14px]">{contacto.whatsapp}</div>
             </div>
           </a>
@@ -57,7 +59,7 @@ export default async function ContactoPage() {
               <Phone size={24} strokeWidth={1.8} className="text-(--blue)" />
             </div>
             <div>
-              <div className="font-bold text-(--ink) text-[15px] mb-0.5">Teléfono</div>
+              <div className="font-bold text-(--ink) text-[15px] mb-0.5">{t('telefono')}</div>
               <div className="text-(--ink-500) text-[13.5px] mb-1">{contacto.horario}</div>
               <div className="text-(--blue) font-semibold text-[14px]">{contacto.telefono}</div>
             </div>
@@ -72,8 +74,8 @@ export default async function ContactoPage() {
               <Mail size={24} strokeWidth={1.8} className="text-(--blue)" />
             </div>
             <div>
-              <div className="font-bold text-(--ink) text-[15px] mb-0.5">Email</div>
-              <div className="text-(--ink-500) text-[13.5px] mb-1">Respuesta en 24 h</div>
+              <div className="font-bold text-(--ink) text-[15px] mb-0.5">{t('email')}</div>
+              <div className="text-(--ink-500) text-[13.5px] mb-1">{t('emailSub')}</div>
               <div className="text-(--blue) font-semibold text-[13px] truncate">{contacto.email}</div>
             </div>
           </a>
@@ -93,10 +95,10 @@ export default async function ContactoPage() {
               className="font-(family-name:--font-lora) text-(--ink) font-medium mb-2"
               style={{ fontSize: 28, letterSpacing: '-0.015em' }}
             >
-              Envíanos un mensaje
+              {t('formTitulo')}
             </h2>
             <p className="text-[14px] text-(--ink-500) mb-8">
-              Te respondemos en menos de 24 horas laborables.
+              {t('formSub')}
             </p>
             <ContactForm email={contacto.email} telefono={contacto.telefono} />
           </div>
@@ -107,7 +109,7 @@ export default async function ContactoPage() {
             {/* Address + hours — clean list, no card */}
             <div>
               <h3 className="font-(family-name:--font-lora) text-(--ink) font-medium text-[20px] mb-5">
-                Dónde encontrarnos
+                {t('dondeEncontrarnos')}
               </h3>
               <div className="space-y-0">
                 <div className="flex items-start gap-4 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
@@ -115,11 +117,11 @@ export default async function ContactoPage() {
                     <MapPin size={16} className="text-(--blue)" />
                   </div>
                   <div>
-                    <div className="font-semibold text-(--ink) text-[14px] mb-1">Dirección</div>
+                    <div className="font-semibold text-(--ink) text-[14px] mb-1">{t('direccion')}</div>
                     <div className="text-(--ink-500) text-[13.5px] leading-[1.6]">
                       {empresa.direccion}<br />
                       {empresa.cp} {empresa.ciudad}<br />
-                      {empresa.provincia}, España
+                      {empresa.provincia}, {t('espana')}
                     </div>
                   </div>
                 </div>
@@ -128,10 +130,10 @@ export default async function ContactoPage() {
                     <Clock size={16} className="text-(--blue)" />
                   </div>
                   <div>
-                    <div className="font-semibold text-(--ink) text-[14px] mb-1">Horario</div>
+                    <div className="font-semibold text-(--ink) text-[14px] mb-1">{t('horario')}</div>
                     <div className="text-(--ink-500) text-[13.5px] leading-[1.6]">
                       {contacto.horario}<br />
-                      <span className="text-[12px]">Sábados y festivos: cerrado</span>
+                      <span className="text-[12px]">{t('sabadosCerrado')}</span>
                     </div>
                   </div>
                 </div>
@@ -141,7 +143,7 @@ export default async function ContactoPage() {
             {/* Map embed — no shadow */}
             <div className="rounded-(--r-lg) overflow-hidden border border-(--line)" style={{ height: 360 }}>
               <iframe
-                title="Ubicación Grupo Lambea"
+                title={t('mapaTitulo')}
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2993.4!2d0.6!3d40.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a2f3f5a0000001%3A0x0!2sCalle%20Caserna%2048%2C%2043877%20Sant%20Jaume%20d'Enveja%2C%20Tarragona!5e0!3m2!1ses!2ses!4v1"
                 width="100%"
                 height="100%"
@@ -156,12 +158,12 @@ export default async function ContactoPage() {
             <div className="flex items-start gap-3 pt-1">
               <AlertTriangle size={16} className="text-(--ink-500) shrink-0 mt-0.5" />
               <div>
-                <div className="font-semibold text-(--ink) text-[13px] mb-0.5">Urgencias toxicológicas — 24 h</div>
+                <div className="font-semibold text-(--ink) text-[13px] mb-0.5">{t('urgenciasTitulo')}</div>
                 <a href={`tel:+${phoneDigits(contacto.telefono_toxicologia)}`} className="text-(--blue) font-bold text-[18px] no-underline hover:underline block mb-0.5">
                   {contacto.telefono_toxicologia}
                 </a>
                 <p className="text-(--ink-500) text-[12px] leading-relaxed">
-                  En caso de ingestión accidental o contacto con los ojos.
+                  {t('urgenciasTexto')}
                 </p>
               </div>
             </div>

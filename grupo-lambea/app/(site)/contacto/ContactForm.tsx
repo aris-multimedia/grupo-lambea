@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Send, CheckCircle, AlertTriangle, Phone, Mail } from 'lucide-react'
 import { sendContactMessage } from '@/app/actions/contact'
 
 type Status = 'idle' | 'sending' | 'sent' | 'fallback' | 'error'
 
 export function ContactForm({ email, telefono }: { email: string; telefono: string }) {
+  const t = useTranslations('contacto')
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -16,10 +18,10 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <CheckCircle size={48} className="text-(--blue)" />
         <h3 className="font-(family-name:--font-lora) text-2xl font-bold text-(--ink)">
-          Mensaje enviado
+          {t('mensajeEnviado')}
         </h3>
         <p className="text-(--ink-500)">
-          Gracias por contactarnos. Te responderemos en menos de 24 horas laborables.
+          {t('graciasContactar')}
         </p>
       </div>
     )
@@ -31,11 +33,10 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
       <div className="flex flex-col items-center gap-4 py-10 text-center">
         <AlertTriangle size={44} className="text-(--warning)" />
         <h3 className="font-(family-name:--font-lora) text-xl font-bold text-(--ink)">
-          Escríbenos directamente
+          {t('escribenosDirecto')}
         </h3>
         <p className="text-(--ink-500) max-w-sm">
-          Ahora mismo no podemos procesar el formulario. Contáctanos por estos medios y te
-          respondemos enseguida:
+          {t('noProcesar')}
         </p>
         <div className="flex flex-col items-center gap-2.5 mt-1">
           <a href={`mailto:${email}`} className="inline-flex items-center gap-2 text-(--blue) font-semibold no-underline hover:underline">
@@ -65,7 +66,7 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
       return
     }
     if (result.reason === 'validation') {
-      setErrorMsg(result.message ?? 'Revisa los datos del formulario.')
+      setErrorMsg(result.message ?? t('errValidacion'))
       setStatus('idle')
       return
     }
@@ -73,7 +74,7 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
       setStatus('fallback')
       return
     }
-    setErrorMsg('No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbenos a ' + email + '.')
+    setErrorMsg(t('errEnvio', { email }))
     setStatus('idle')
   }
 
@@ -100,34 +101,34 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
 
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="nombre" className={labelClass}>Nombre *</label>
-          <input id="nombre" name="nombre" type="text" required className={fieldClass} placeholder="Tu nombre" />
+          <label htmlFor="nombre" className={labelClass}>{t('labelNombre')}</label>
+          <input id="nombre" name="nombre" type="text" required className={fieldClass} placeholder={t('phNombre')} />
         </div>
         <div>
-          <label htmlFor="telefono" className={labelClass}>Teléfono</label>
+          <label htmlFor="telefono" className={labelClass}>{t('labelTelefono')}</label>
           <input id="telefono" name="telefono" type="tel" className={fieldClass} placeholder="+34 600 000 000" />
         </div>
       </div>
 
       <div>
-        <label htmlFor="email" className={labelClass}>Email *</label>
-        <input id="email" name="email" type="email" required className={fieldClass} placeholder="tu@email.com" />
+        <label htmlFor="email" className={labelClass}>{t('labelEmail')}</label>
+        <input id="email" name="email" type="email" required className={fieldClass} placeholder={t('phEmail')} />
       </div>
 
       <div>
-        <label htmlFor="asunto" className={labelClass}>Asunto *</label>
+        <label htmlFor="asunto" className={labelClass}>{t('labelAsunto')}</label>
         <select id="asunto" name="asunto" required className={fieldClass} defaultValue="">
-          <option value="" disabled>Selecciona un asunto</option>
-          <option value="consulta">Consulta sobre un producto</option>
-          <option value="pedido">Consulta sobre un pedido</option>
-          <option value="presupuesto">Solicitar presupuesto</option>
-          <option value="distribucion">Información distribución</option>
-          <option value="otro">Otro</option>
+          <option value="" disabled>{t('optSelecciona')}</option>
+          <option value="consulta">{t('optConsulta')}</option>
+          <option value="pedido">{t('optPedido')}</option>
+          <option value="presupuesto">{t('optPresupuesto')}</option>
+          <option value="distribucion">{t('optDistribucion')}</option>
+          <option value="otro">{t('optOtro')}</option>
         </select>
       </div>
 
       <div>
-        <label htmlFor="mensaje" className={labelClass}>Mensaje *</label>
+        <label htmlFor="mensaje" className={labelClass}>{t('labelMensaje')}</label>
         <textarea
           id="mensaje"
           name="mensaje"
@@ -135,16 +136,16 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
           minLength={10}
           rows={5}
           className={`${fieldClass} resize-none`}
-          placeholder="¿En qué podemos ayudarte?"
+          placeholder={t('phMensaje')}
         />
       </div>
 
       <label className="flex items-start gap-2.5 cursor-pointer select-none">
         <input type="checkbox" name="consentimiento" required className="w-4 h-4 mt-0.5 rounded accent-(--blue)" />
         <span className="text-[13px] text-(--ink-500) leading-relaxed">
-          He leído y acepto la{' '}
+          {t('consentPre')}{' '}
           <Link href="/politica-privacidad" className="text-(--blue) hover:underline">
-            política de privacidad
+            {t('consentLink')}
           </Link>
           .
         </span>
@@ -156,11 +157,11 @@ export function ContactForm({ email, telefono }: { email: string; telefono: stri
         className="w-full flex items-center justify-center gap-2 bg-(--blue) hover:bg-(--blue-dark) disabled:opacity-60 text-white font-semibold py-4 rounded-(--r-pill) transition-colors text-base"
       >
         <Send size={18} />
-        {sending ? 'Enviando…' : 'Enviar mensaje'}
+        {sending ? t('enviando') : t('enviar')}
       </button>
 
       <p className="text-xs text-(--ink-500) text-center">
-        Respondemos en menos de 24 horas laborables
+        {t('respondemos')}
       </p>
     </form>
   )
